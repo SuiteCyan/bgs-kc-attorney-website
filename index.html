@@ -6,6 +6,8 @@
 <title>B. Garry Stewart | Kansas City Attorney at Law</title>
 <link rel="icon" type="image/png" href="claude/images/BGS circle logo.png">
 <link rel="apple-touch-icon" href="claude/images/BGS circle logo.png">
+<link rel="icon" type="image/png" href="claude/images/BGS circle logo.png">
+<link rel="apple-touch-icon" href="claude/images/BGS circle logo.png">
 <meta name="description" content="Experienced legal representation in Kansas City, Missouri. Criminal defense, DUI, family law, personal injury, and traffic violations. Schedule your consultation today.">
 <meta name="keywords" content="Kansas City attorney, Kansas City lawyer, Missouri attorney, criminal defense lawyer Kansas City, DUI lawyer Kansas City">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -3099,6 +3101,459 @@
 
   renderAll();
 })();
+</script>
+
+<!-- ═══════════════════════════════════════════════════
+     BGS CLIENT REVIEW SYSTEM  ·  ashley.suitecyan@gmail.com
+════════════════════════════════════════════════════ -->
+<style>
+  /* ── Toolbar height = 50px. Push site's fixed header (72px) below it */
+  #bgs-toolbar { position:fixed; top:0; left:0; right:0; z-index:2147483647;
+    height:50px; background:#1D2B3A; display:flex; align-items:center;
+    gap:10px; padding:0 18px; box-shadow:0 3px 18px rgba(0,0,0,.5);
+    font-family:'Segoe UI',Arial,sans-serif; box-sizing:border-box; }
+  header { top:50px !important; }
+  body   { padding-top:122px !important; }
+
+  #bgs-toolbar .tl-brand { font-size:13px; font-weight:800; color:#B8860B; white-space:nowrap; }
+  #bgs-toolbar .tl-sep   { width:1px; height:20px; background:rgba(255,255,255,.15); flex-shrink:0; margin:0 2px; }
+  #bgs-toolbar .tl-lbl   { font-size:11px; color:rgba(255,255,255,.5); white-space:nowrap; }
+  #bgs-toolbar .tl-cnt   { font-size:13px; font-weight:800; color:#B8860B; }
+
+  #bgs-btn-add {
+    display:flex; align-items:center; gap:6px;
+    background:#B8860B; color:#fff; border:none; border-radius:7px;
+    font-family:inherit; font-size:13px; font-weight:700;
+    padding:7px 16px; cursor:pointer; white-space:nowrap; flex-shrink:0;
+    transition:background .2s;
+  }
+  #bgs-btn-add:hover  { background:#9a6f09; }
+  #bgs-btn-add.on     { background:#d94f20; }
+  #bgs-btn-add.on:hover { background:#b83e16; }
+
+  #bgs-btn-list {
+    display:flex; align-items:center; gap:6px;
+    background:rgba(255,255,255,.1); color:#fff; border:1px solid rgba(255,255,255,.2);
+    border-radius:7px; font-family:inherit; font-size:13px; font-weight:600;
+    padding:7px 13px; cursor:pointer; white-space:nowrap; flex-shrink:0;
+    transition:background .15s;
+  }
+  #bgs-btn-list:hover { background:rgba(255,255,255,.2); }
+
+  #bgs-btn-send {
+    display:flex; align-items:center; gap:6px;
+    background:#22863a; color:#fff; border:none; border-radius:7px;
+    font-family:inherit; font-size:13px; font-weight:700;
+    padding:7px 16px; cursor:pointer; white-space:nowrap; flex-shrink:0;
+    margin-left:auto; transition:background .2s;
+  }
+  #bgs-btn-send:hover { background:#1a6b2e; }
+
+  #bgs-btn-clear { background:none; border:none; color:rgba(255,255,255,.35);
+    font-family:inherit; font-size:11px; cursor:pointer; text-decoration:underline;
+    white-space:nowrap; flex-shrink:0; }
+  #bgs-btn-clear:hover { color:rgba(255,255,255,.65); }
+
+  #bgs-hint { font-size:12px; color:#f0a060; font-weight:600; white-space:nowrap;
+    display:none; animation:bgs-blink 1.4s ease-in-out infinite; }
+  #bgs-hint.on { display:block; }
+  @keyframes bgs-blink { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+  /* crosshair cursor over everything when in review mode */
+  body.bgs-mode, body.bgs-mode * { cursor:crosshair !important; }
+
+  /* ── PINS */
+  .bgs-pin {
+    position:absolute; width:32px; height:32px;
+    background:#d94f20; border:2.5px solid #fff; border-radius:50% 50% 50% 0;
+    transform:rotate(-45deg) translate(-50%,-50%);
+    cursor:pointer !important; z-index:2147483640;
+    box-shadow:0 2px 10px rgba(0,0,0,.4);
+    display:flex; align-items:center; justify-content:center;
+    transition:transform .15s, box-shadow .15s;
+  }
+  .bgs-pin:hover { transform:rotate(-45deg) translate(-50%,-50%) scale(1.2); box-shadow:0 4px 16px rgba(0,0,0,.5); }
+  .bgs-pin.done  { background:#22863a; }
+  .bgs-pin .bgs-pin-n { transform:rotate(45deg); font-size:11px; font-weight:800; color:#fff; font-family:Arial,sans-serif; }
+
+  /* ── POPUP */
+  #bgs-popup {
+    position:fixed; z-index:2147483646; background:#fff; border-radius:14px;
+    box-shadow:0 8px 40px rgba(0,0,0,.24); padding:20px; width:320px;
+    font-family:'Segoe UI',Arial,sans-serif; display:none;
+    animation:bgs-pop .18s ease;
+  }
+  @keyframes bgs-pop { from{opacity:0;transform:scale(.92)} to{opacity:1;transform:scale(1)} }
+  #bgs-popup.on { display:block; }
+  #bgs-popup .pp-head { display:flex; align-items:center; gap:8px;
+    font-size:13px; font-weight:800; color:#1D2B3A; margin-bottom:12px; }
+  #bgs-popup .pp-num  { background:#d94f20; color:#fff; width:22px; height:22px;
+    border-radius:50%; font-size:11px; font-weight:800;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  #bgs-popup textarea {
+    width:100%; box-sizing:border-box; border:1.5px solid #dde2ea; border-radius:8px;
+    padding:10px 12px; font-family:inherit; font-size:13px; line-height:1.5;
+    resize:vertical; min-height:90px; color:#1D2B3A; outline:none;
+    transition:border-color .15s;
+  }
+  #bgs-popup textarea:focus { border-color:#B8860B; }
+  #bgs-popup .pp-hint { font-size:11px; color:#aaa; margin-top:6px; line-height:1.4; }
+  #bgs-popup .pp-row  { display:flex; gap:8px; margin-top:14px; }
+  #bgs-btn-save { flex:1; background:#1D2B3A; color:#fff; border:none;
+    border-radius:8px; font-family:inherit; font-size:13px; font-weight:700;
+    padding:9px; cursor:pointer; transition:background .15s; }
+  #bgs-btn-save:hover { background:#B8860B; }
+  #bgs-btn-cancel { background:#f2f4f7; color:#666; border:none; border-radius:8px;
+    font-family:inherit; font-size:13px; padding:9px 14px; cursor:pointer; }
+  #bgs-btn-cancel:hover { background:#e4e7ee; }
+  #bgs-btn-del { background:none; border:none; color:#d94f20; font-family:inherit;
+    font-size:12px; cursor:pointer; text-decoration:underline; margin-top:8px; display:none; }
+  #bgs-btn-del.on { display:block; }
+
+  /* ── SIDE PANEL */
+  #bgs-panel {
+    position:fixed; top:50px; right:0; width:310px; height:calc(100vh - 50px);
+    background:#fff; box-shadow:-4px 0 24px rgba(0,0,0,.12); z-index:2147483644;
+    display:flex; flex-direction:column; font-family:'Segoe UI',Arial,sans-serif;
+    transform:translateX(100%); transition:transform .25s ease;
+  }
+  #bgs-panel.on { transform:translateX(0); }
+  #bgs-panel .pan-hd { background:#1D2B3A; color:#fff; padding:15px 18px;
+    font-size:14px; font-weight:800; display:flex; align-items:center;
+    justify-content:space-between; flex-shrink:0; }
+  #bgs-panel .pan-hd span { color:#B8860B; }
+  #bgs-btn-close { background:none; border:none; color:rgba(255,255,255,.55);
+    font-size:22px; cursor:pointer; line-height:1; padding:0 4px; }
+  #bgs-btn-close:hover { color:#fff; }
+  #bgs-empty { flex:1; display:flex; flex-direction:column; align-items:center;
+    justify-content:center; color:#bbb; font-size:13px; text-align:center;
+    padding:28px; gap:10px; }
+  #bgs-empty .ei { font-size:38px; }
+  #bgs-list { flex:1; overflow-y:auto; padding:10px;
+    display:flex; flex-direction:column; gap:9px; }
+  .bgs-item { background:#f7f9fc; border:1px solid #e4e8ef; border-left:4px solid #d94f20;
+    border-radius:9px; padding:11px 13px; }
+  .bgs-item.done { border-left-color:#22863a; opacity:.6; }
+  .bgs-item .it-top { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
+  .bgs-item .it-num { background:#d94f20; color:#fff; width:20px; height:20px;
+    border-radius:50%; font-size:10px; font-weight:800;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .bgs-item.done .it-num { background:#22863a; }
+  .bgs-item .it-status { font-size:11px; font-weight:700; color:#1D2B3A; }
+  .bgs-item .it-time   { font-size:10px; color:#bbb; margin-left:auto; }
+  .bgs-item .it-text   { font-size:12.5px; color:#333; line-height:1.45; }
+  .bgs-item .it-btns   { display:flex; gap:7px; margin-top:7px; flex-wrap:wrap; }
+  .ib { font-size:11px; font-family:inherit; border:1px solid #dde2ea; background:#fff;
+    padding:3px 8px; border-radius:5px; cursor:pointer; color:#555; transition:background .12s; }
+  .ib:hover { background:#f0f2f6; }
+  .ib.res { border-color:#22863a; color:#22863a; }
+  .ib.res:hover { background:#eef7f2; }
+  .ib.del { border-color:#d94f20; color:#d94f20; }
+  .ib.del:hover { background:#fff0e8; }
+
+  /* ── TOAST */
+  #bgs-toast { position:fixed; bottom:28px; left:50%;
+    transform:translateX(-50%) translateY(16px);
+    background:#22863a; color:#fff; font-family:'Segoe UI',Arial,sans-serif;
+    font-size:13px; font-weight:700; padding:11px 22px; border-radius:9px;
+    box-shadow:0 4px 20px rgba(0,0,0,.2); opacity:0;
+    transition:opacity .25s, transform .25s; pointer-events:none; z-index:2147483647;
+    white-space:nowrap; }
+  #bgs-toast.on { opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
+
+<!-- TOOLBAR -->
+<div id="bgs-toolbar">
+  <div class="tl-brand">✦ BGS Review</div>
+  <div class="tl-sep"></div>
+  <button id="bgs-btn-add">✏️ &nbsp;Add Comment</button>
+  <span id="bgs-hint">&#8595; Click anywhere on the page to pin a comment</span>
+  <div class="tl-sep"></div>
+  <span class="tl-lbl">Comments:</span>
+  <span class="tl-cnt" id="bgs-cnt">0</span>
+  <button id="bgs-btn-list">📋 &nbsp;View All</button>
+  <button id="bgs-btn-send">📤 &nbsp;Send Feedback to Ashley</button>
+  <button id="bgs-btn-clear">Clear all</button>
+</div>
+
+<!-- POPUP -->
+<div id="bgs-popup">
+  <div class="pp-head"><div class="pp-num" id="bgs-pp-num">1</div><span id="bgs-pp-title">Add your comment</span></div>
+  <textarea id="bgs-ta" placeholder="Describe what you'd like changed here…"></textarea>
+  <div class="pp-hint">Be specific — section name, wording, colour, layout, etc. &nbsp;Ctrl+Enter to save.</div>
+  <div class="pp-row">
+    <button id="bgs-btn-save">Save</button>
+    <button id="bgs-btn-cancel">Cancel</button>
+  </div>
+  <button id="bgs-btn-del">Delete this comment</button>
+</div>
+
+<!-- SIDE PANEL -->
+<div id="bgs-panel">
+  <div class="pan-hd">Feedback Notes &nbsp;<span id="bgs-pan-cnt">(0)</span>
+    <button id="bgs-btn-close">&#215;</button></div>
+  <div id="bgs-empty"><div class="ei">💬</div>
+    <div>No comments yet.<br>Click <strong>Add Comment</strong> then<br>click anywhere on the page.</div></div>
+  <div id="bgs-list" style="display:none"></div>
+</div>
+
+<!-- TOAST -->
+<div id="bgs-toast"></div>
+
+<script>
+/* BGS Review System — initialises after full page load */
+window.addEventListener('load', function() {
+  try {
+    var KEY   = 'bgs_rv3';
+    var notes = JSON.parse(localStorage.getItem(KEY) || '[]');
+    var mode  = false;
+    var editId = null;
+    var px = 0, py = 0;
+
+    var btnAdd   = document.getElementById('bgs-btn-add');
+    var hint     = document.getElementById('bgs-hint');
+    var btnList  = document.getElementById('bgs-btn-list');
+    var btnSend  = document.getElementById('bgs-btn-send');
+    var btnClear = document.getElementById('bgs-btn-clear');
+    var panel    = document.getElementById('bgs-panel');
+    var btnClose = document.getElementById('bgs-btn-close');
+    var popup    = document.getElementById('bgs-popup');
+    var ppNum    = document.getElementById('bgs-pp-num');
+    var ppTitle  = document.getElementById('bgs-pp-title');
+    var ta       = document.getElementById('bgs-ta');
+    var btnSave  = document.getElementById('bgs-btn-save');
+    var btnCan   = document.getElementById('bgs-btn-cancel');
+    var btnDel   = document.getElementById('bgs-btn-del');
+    var list     = document.getElementById('bgs-list');
+    var empty    = document.getElementById('bgs-empty');
+    var cnt      = document.getElementById('bgs-cnt');
+    var panCnt   = document.getElementById('bgs-pan-cnt');
+    var toast    = document.getElementById('bgs-toast');
+
+    function save() { try { localStorage.setItem(KEY, JSON.stringify(notes)); } catch(e){} }
+
+    /* ── PINS */
+    function renderPins() {
+      document.querySelectorAll('.bgs-pin').forEach(function(p){ p.remove(); });
+      notes.forEach(function(n) {
+        var pin = document.createElement('div');
+        pin.className = 'bgs-pin' + (n.done ? ' done' : '');
+        pin.setAttribute('data-id', n.id);
+        pin.style.left = n.x + 'px';
+        pin.style.top  = n.y + 'px';
+        pin.innerHTML  = '<span class="bgs-pin-n">' + n.num + '</span>';
+        pin.addEventListener('click', function(e) {
+          e.stopPropagation(); e.preventDefault();
+          openEdit(n.id, e.clientX, e.clientY);
+        }, true);
+        document.body.appendChild(pin);
+      });
+    }
+
+    /* ── PANEL */
+    function renderPanel() {
+      var n = notes.length;
+      cnt.textContent    = n;
+      panCnt.textContent = '(' + n + ')';
+      if (n === 0) {
+        empty.style.display = 'flex';
+        list.style.display  = 'none';
+        return;
+      }
+      empty.style.display = 'none';
+      list.style.display  = 'flex';
+      list.innerHTML = '';
+      var rev = notes.slice().reverse();
+      rev.forEach(function(c) {
+        var d   = document.createElement('div');
+        d.className = 'bgs-item' + (c.done ? ' done' : '');
+        var dt  = new Date(c.ts).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+        d.innerHTML =
+          '<div class="it-top">' +
+            '<div class="it-num">' + c.num + '</div>' +
+            '<div class="it-status">' + (c.done ? '&#10003; Resolved' : 'Open') + '</div>' +
+            '<div class="it-time">' + dt + '</div>' +
+          '</div>' +
+          '<div class="it-text">' + c.text.replace(/\n/g,'<br>') + '</div>' +
+          '<div class="it-btns">' +
+            '<button class="ib" onclick="bgsGo(' + c.id + ')">&#128205; Find</button>' +
+            '<button class="ib res" onclick="bgsRes(' + c.id + ')">' + (c.done ? 'Reopen' : '&#10003; Resolve') + '</button>' +
+            '<button class="ib del" onclick="bgsDel(' + c.id + ')">Delete</button>' +
+          '</div>';
+        list.appendChild(d);
+      });
+    }
+
+    function renderAll() { renderPins(); renderPanel(); }
+
+    /* ── TOGGLE MODE */
+    btnAdd.addEventListener('click', function(e) {
+      e.stopPropagation();
+      mode = !mode;
+      document.body.classList.toggle('bgs-mode', mode);
+      btnAdd.classList.toggle('on', mode);
+      btnAdd.innerHTML = mode ? '&#10005; &nbsp;Exit Comment Mode' : '&#9998;&#65039; &nbsp;Add Comment';
+      hint.classList.toggle('on', mode);
+      closePopup();
+    });
+
+    /* ── CLICK TO PIN — capture:true fires before all other handlers */
+    document.addEventListener('click', function(e) {
+      if (!mode) return;
+      var t = e.target;
+      if (t.closest && (
+        t.closest('#bgs-toolbar') ||
+        t.closest('#bgs-popup')   ||
+        t.closest('#bgs-panel')   ||
+        t.closest('.bgs-pin')
+      )) return;
+
+      e.stopPropagation();
+      e.preventDefault();
+      px = e.pageX; py = e.pageY;
+      editId = null;
+      ppNum.textContent   = notes.length + 1;
+      ppTitle.textContent = 'Add your comment';
+      ta.value = '';
+      btnDel.classList.remove('on');
+      showPopup(e.clientX, e.clientY);
+      setTimeout(function(){ ta.focus(); }, 50);
+    }, true); /* <-- capture:true is the key fix */
+
+    function showPopup(cx, cy) {
+      popup.classList.add('on');
+      var pw = 330, ph = 260, vw = window.innerWidth, vh = window.innerHeight;
+      var left = cx + 16, top = cy + 16;
+      if (left + pw > vw - 10) left = cx - pw - 16;
+      if (top  + ph > vh - 10) top  = cy - ph - 16;
+      if (left < 10) left = 10;
+      if (top  < 56) top  = 56;
+      popup.style.left = left + 'px';
+      popup.style.top  = top  + 'px';
+    }
+
+    function closePopup() { popup.classList.remove('on'); editId = null; }
+
+    function openEdit(id, cx, cy) {
+      var c = notes.find(function(x){ return x.id === id; });
+      if (!c) return;
+      editId = id;
+      ppNum.textContent   = c.num;
+      ppTitle.textContent = 'Edit comment';
+      ta.value = c.text;
+      btnDel.classList.add('on');
+      showPopup(cx, cy);
+      setTimeout(function(){ ta.focus(); }, 50);
+    }
+
+    btnSave.addEventListener('click', function() {
+      var text = ta.value.trim();
+      if (!text) { ta.style.borderColor = '#d94f20'; return; }
+      ta.style.borderColor = '';
+      if (editId !== null) {
+        var c = notes.find(function(x){ return x.id === editId; });
+        if (c) c.text = text;
+      } else {
+        var id = Date.now();
+        notes.push({ id:id, num:notes.length+1, x:px, y:py, text:text, done:false, ts:id });
+      }
+      save(); renderAll(); closePopup();
+    });
+
+    btnCan.addEventListener('click', closePopup);
+
+    ta.addEventListener('keydown', function(e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') btnSave.click();
+      if (e.key === 'Escape') closePopup();
+    });
+
+    btnDel.addEventListener('click', function() {
+      if (editId === null) return;
+      bgsDel(editId); closePopup();
+    });
+
+    window.bgsDel = function(id) {
+      notes = notes.filter(function(c){ return c.id !== id; });
+      notes.forEach(function(c,i){ c.num = i+1; });
+      save(); renderAll();
+    };
+    window.bgsRes = function(id) {
+      var c = notes.find(function(x){ return x.id === id; });
+      if (c) { c.done = !c.done; save(); renderAll(); }
+    };
+    window.bgsGo = function(id) {
+      var pin = document.querySelector('.bgs-pin[data-id="'+id+'"]');
+      if (!pin) return;
+      var top = parseInt(pin.style.top) - window.innerHeight/2;
+      window.scrollTo({ top: Math.max(0,top), behavior:'smooth' });
+      pin.style.transform = 'rotate(-45deg) translate(-50%,-50%) scale(1.5)';
+      setTimeout(function(){ pin.style.transform=''; }, 900);
+    };
+
+    /* ── PANEL */
+    btnList.addEventListener('click',  function(){ panel.classList.toggle('on'); });
+    btnClose.addEventListener('click', function(){ panel.classList.remove('on'); });
+
+    /* ── SEND REPORT */
+    btnSend.addEventListener('click', function() {
+      if (!notes.length) { showToast('No comments yet — add some first!', '#B8860B'); return; }
+      var open = notes.filter(function(c){ return !c.done; });
+      var done = notes.filter(function(c){ return  c.done; });
+      var lines = [
+        '=== BGS Attorney Website — Client Feedback ===',
+        'Date: ' + new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}),
+        'Total: ' + notes.length + ' comment(s)  |  Open: ' + open.length + '  |  Resolved: ' + done.length,
+        ''
+      ];
+      if (open.length) {
+        lines.push('-- OPEN FEEDBACK --');
+        open.forEach(function(c){ lines.push('[' + c.num + '] ' + c.text); lines.push(''); });
+      }
+      if (done.length) {
+        lines.push('-- RESOLVED --');
+        done.forEach(function(c){ lines.push('[' + c.num + '] (resolved) ' + c.text); lines.push(''); });
+      }
+      lines.push('--------------------------------');
+      lines.push('Please send to: ashley.suitecyan@gmail.com');
+      var report = lines.join('\n');
+      try {
+        navigator.clipboard.writeText(report).then(function(){
+          showToast('Copied! Paste into an email to ashley.suitecyan@gmail.com');
+        }).catch(function(){ fallbackCopy(report); });
+      } catch(e) { fallbackCopy(report); }
+    });
+
+    function fallbackCopy(text) {
+      var el = document.createElement('textarea');
+      el.value = text; el.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+      document.body.appendChild(el); el.select();
+      try { document.execCommand('copy'); showToast('Copied! Paste into an email to ashley.suitecyan@gmail.com'); }
+      catch(e) { showToast('Could not copy — please screenshot your comments instead.', '#B8860B'); }
+      document.body.removeChild(el);
+    }
+
+    /* ── CLEAR */
+    btnClear.addEventListener('click', function() {
+      if (!notes.length) return;
+      if (!confirm('Delete all comments? This cannot be undone.')) return;
+      notes = []; save(); renderAll();
+    });
+
+    function showToast(msg, bg) {
+      toast.textContent = msg;
+      toast.style.background = bg || '#22863a';
+      toast.classList.add('on');
+      setTimeout(function(){ toast.classList.remove('on'); }, 3500);
+    }
+
+    renderAll();
+
+  } catch(err) {
+    /* If something went wrong, show a visible error in the toolbar */
+    var tb = document.getElementById('bgs-toolbar');
+    if (tb) tb.innerHTML += '<span style="color:#ff6b6b;font-size:12px;margin-left:12px;">Review system error: ' + err.message + '</span>';
+  }
+});
 </script>
 
 </body>
