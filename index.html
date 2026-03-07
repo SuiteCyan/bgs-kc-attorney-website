@@ -2227,6 +2227,9 @@ window.addEventListener('load', function() {
   try {
     var KEY   = 'bgs_rv3';
     var TO    = 'ashley.suitecyan@gmail.com';
+    /* ── ONE-TIME RESET: clears any test comments on first load of this version */
+    var _VER = 'bgs_rv3_v3';
+    if (!localStorage.getItem(_VER)) { localStorage.removeItem(KEY); localStorage.setItem(_VER,'1'); }
     var notes = JSON.parse(localStorage.getItem(KEY) || '[]');
     var mode  = false;
     var editId = null, px = 0, py = 0;
