@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>B. Garry Stewart | Kansas City Attorney at Law</title>
+<link rel="icon" type="image/png" href="claude/images/BGS circle logo.png">
+<link rel="apple-touch-icon" href="claude/images/BGS circle logo.png">
 <meta name="description" content="Experienced legal representation in Kansas City, Missouri. Criminal defense, DUI, family law, personal injury, and traffic violations. Schedule your consultation today.">
 <meta name="keywords" content="Kansas City attorney, Kansas City lawyer, Missouri attorney, criminal defense lawyer Kansas City, DUI lawyer Kansas City">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2534,6 +2536,567 @@
   }
 
   // ── INIT
+  renderAll();
+})();
+</script>
+<!-- ═══════════════════════════════════════════════════════════
+     CLIENT REVIEW ANNOTATION SYSTEM
+     ashley.suitecyan@gmail.com · BGS Attorney Website
+════════════════════════════════════════════════════════════ -->
+<style>
+  /* ── Push site's fixed header below the review toolbar (toolbar = 52px tall) */
+  header {
+    top: 52px !important;
+  }
+  /* ── Increase body top padding to account for toolbar (52px) + site header (72px) */
+  body {
+    padding-top: calc(52px + 72px) !important;
+    padding-bottom: 0 !important;
+  }
+
+  /* ── REVIEW TOOLBAR */
+  #review-toolbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 99999;
+    height: 52px;
+    background: #1D2B3A;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 20px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.45);
+    font-family: 'Segoe UI', Arial, sans-serif;
+  }
+  #review-toolbar .rt-logo {
+    font-size: 13px;
+    font-weight: 800;
+    color: #B8860B;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+  #review-toolbar .rt-sep {
+    width: 1px; height: 22px;
+    background: rgba(255,255,255,0.15);
+    margin: 0 4px;
+    flex-shrink: 0;
+  }
+  #review-toolbar .rt-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.55);
+    white-space: nowrap;
+  }
+  #review-toolbar .rt-count {
+    font-size: 13px;
+    font-weight: 700;
+    color: #B8860B;
+    min-width: 20px;
+  }
+  #btn-toggle-mode {
+    display: flex; align-items: center; gap: 7px;
+    background: #B8860B; color: #fff;
+    font-family: inherit; font-size: 13px; font-weight: 700;
+    padding: 6px 16px; border: none; border-radius: 7px;
+    cursor: pointer; transition: background 0.2s;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  #btn-toggle-mode:hover { background: #9a6f09; }
+  #btn-toggle-mode.active { background: #e05c2a; }
+  #btn-toggle-mode.active:hover { background: #c24a1e; }
+  #btn-panel-toggle {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.1); color: #fff;
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    padding: 6px 14px; border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 7px; cursor: pointer; transition: background 0.15s;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  #btn-panel-toggle:hover { background: rgba(255,255,255,0.18); }
+  #btn-copy-report {
+    display: flex; align-items: center; gap: 6px;
+    background: #22863a; color: #fff;
+    font-family: inherit; font-size: 13px; font-weight: 700;
+    padding: 6px 16px; border: none; border-radius: 7px;
+    cursor: pointer; transition: background 0.2s;
+    white-space: nowrap; flex-shrink: 0; margin-left: auto;
+  }
+  #btn-copy-report:hover { background: #1a6b2e; }
+  #btn-clear-all {
+    background: none; color: rgba(255,255,255,0.35);
+    font-family: inherit; font-size: 12px;
+    border: none; cursor: pointer; text-decoration: underline;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  #btn-clear-all:hover { color: rgba(255,255,255,0.65); }
+  #mode-hint {
+    font-size: 12px; color: #e8a060; font-weight: 600;
+    animation: bgs-pulse 1.5s ease-in-out infinite;
+    display: none; white-space: nowrap;
+  }
+  #mode-hint.visible { display: block; }
+  @keyframes bgs-pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* ── REVIEW CURSOR */
+  body.review-mode,
+  body.review-mode * { cursor: crosshair !important; }
+
+  /* ── COMMENT PIN */
+  .comment-pin {
+    position: absolute;
+    width: 30px; height: 30px;
+    background: #e05c2a;
+    border: 2.5px solid #fff;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg) translate(-50%, -50%);
+    cursor: pointer !important;
+    z-index: 9000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+    transition: transform 0.15s, box-shadow 0.15s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .comment-pin:hover {
+    transform: rotate(-45deg) translate(-50%,-50%) scale(1.2);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  }
+  .comment-pin.resolved { background: #22863a; }
+  .comment-pin .pin-num {
+    transform: rotate(45deg);
+    font-size: 11px; font-weight: 800;
+    color: #fff; font-family: Arial, sans-serif; line-height: 1;
+  }
+
+  /* ── COMMENT POPUP */
+  #comment-popup {
+    position: fixed;
+    z-index: 99998;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.12);
+    padding: 20px;
+    width: 320px;
+    display: none;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    animation: bgs-popIn 0.18s ease;
+  }
+  @keyframes bgs-popIn { from{opacity:0;transform:scale(0.92)} to{opacity:1;transform:scale(1)} }
+  #comment-popup.visible { display: block; }
+  #comment-popup .cp-header {
+    font-size: 13px; font-weight: 800; color: #1D2B3A;
+    margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+  }
+  #comment-popup .cp-num {
+    background: #e05c2a; color: #fff;
+    width: 22px; height: 22px; border-radius: 50%;
+    font-size: 11px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  #comment-popup textarea {
+    width: 100%; box-sizing: border-box;
+    border: 1.5px solid #DDE2EA; border-radius: 8px;
+    padding: 10px 12px; font-family: inherit;
+    font-size: 13px; line-height: 1.5; resize: vertical;
+    min-height: 90px; color: #1D2B3A;
+    outline: none; transition: border-color 0.15s;
+  }
+  #comment-popup textarea:focus { border-color: #B8860B; }
+  #comment-popup .cp-hint {
+    font-size: 11px; color: #aaa; margin-top: 6px; line-height: 1.4;
+  }
+  #comment-popup .cp-actions {
+    display: flex; gap: 8px; margin-top: 14px;
+  }
+  #btn-save-comment {
+    flex: 1; background: #1D2B3A; color: #fff;
+    font-family: inherit; font-size: 13px; font-weight: 700;
+    padding: 9px; border: none; border-radius: 8px; cursor: pointer;
+    transition: background 0.15s;
+  }
+  #btn-save-comment:hover { background: #B8860B; }
+  #btn-cancel-comment {
+    background: #F2F4F7; color: #666;
+    font-family: inherit; font-size: 13px;
+    padding: 9px 14px; border: none; border-radius: 8px; cursor: pointer;
+  }
+  #btn-cancel-comment:hover { background: #E4E7EE; }
+  #btn-delete-comment {
+    background: none; color: #e05c2a;
+    font-family: inherit; font-size: 12px;
+    border: none; cursor: pointer; text-decoration: underline;
+    margin-top: 8px; display: none;
+  }
+  #btn-delete-comment.visible { display: block; }
+
+  /* ── SIDE PANEL */
+  #review-panel {
+    position: fixed;
+    top: 52px; right: 0;
+    width: 320px; height: calc(100vh - 52px);
+    background: #fff;
+    box-shadow: -4px 0 24px rgba(0,0,0,0.12);
+    z-index: 9998;
+    display: flex; flex-direction: column;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+  }
+  #review-panel.open { transform: translateX(0); }
+  #review-panel .rp-header {
+    background: #1D2B3A; color: #fff;
+    padding: 16px 18px;
+    font-size: 14px; font-weight: 800;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  #review-panel .rp-header span { color: #B8860B; }
+  #btn-close-panel {
+    background: none; border: none; color: rgba(255,255,255,0.6);
+    font-size: 20px; cursor: pointer; line-height: 1; padding: 0 4px;
+  }
+  #btn-close-panel:hover { color: #fff; }
+  #rp-empty-state {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    color: #bbb; font-size: 14px; text-align: center; padding: 32px; gap: 12px;
+  }
+  #rp-empty-state .rp-empty-icon { font-size: 40px; }
+  #comment-list {
+    flex: 1; overflow-y: auto; padding: 12px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .comment-item {
+    background: #F7F9FC; border: 1px solid #E4E8EF;
+    border-left: 4px solid #e05c2a;
+    border-radius: 9px; padding: 12px 14px;
+    cursor: pointer; transition: background 0.12s;
+  }
+  .comment-item:hover { background: #EFF3F8; }
+  .comment-item.resolved { border-left-color: #22863a; opacity: 0.65; }
+  .comment-item .ci-top {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+  }
+  .comment-item .ci-num {
+    background: #e05c2a; color: #fff;
+    width: 20px; height: 20px; border-radius: 50%;
+    font-size: 10px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .comment-item.resolved .ci-num { background: #22863a; }
+  .comment-item .ci-time { font-size: 11px; color: #aaa; margin-left: auto; }
+  .comment-item .ci-text { font-size: 13px; color: #333; line-height: 1.45; }
+  .comment-item .ci-actions { display: flex; gap: 8px; margin-top: 8px; }
+  .ci-btn {
+    font-size: 11px; font-family: inherit;
+    border: 1px solid #DDE2EA; background: #fff;
+    padding: 3px 9px; border-radius: 5px;
+    cursor: pointer; color: #555; transition: background 0.12s;
+  }
+  .ci-btn:hover { background: #F2F4F7; }
+  .ci-btn.resolve { border-color: #22863a; color: #22863a; }
+  .ci-btn.resolve:hover { background: #EEF7F2; }
+  .ci-btn.del { border-color: #e05c2a; color: #e05c2a; }
+  .ci-btn.del:hover { background: #FFF0E8; }
+
+  /* ── TOAST */
+  #copy-toast {
+    position: fixed; bottom: 32px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #22863a; color: #fff;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 14px; font-weight: 700;
+    padding: 12px 24px; border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    opacity: 0; transition: opacity 0.25s, transform 0.25s;
+    pointer-events: none; z-index: 999999;
+    white-space: nowrap;
+  }
+  #copy-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+
+<!-- ── TOOLBAR (floats above everything, including site header) -->
+<div id="review-toolbar">
+  <div class="rt-logo">✦ BGS Review</div>
+  <div class="rt-sep"></div>
+  <button id="btn-toggle-mode">✏️ &nbsp;Add Comment</button>
+  <span id="mode-hint">↓ Click anywhere on the page to pin a comment</span>
+  <div class="rt-sep"></div>
+  <span class="rt-label">Comments:</span>
+  <span class="rt-count" id="toolbar-count">0</span>
+  <button id="btn-panel-toggle">📋 &nbsp;View All</button>
+  <button id="btn-copy-report">📤 &nbsp;Send Feedback to Ashley</button>
+  <button id="btn-clear-all">Clear all</button>
+</div>
+
+<!-- ── COMMENT POPUP -->
+<div id="comment-popup">
+  <div class="cp-header">
+    <div class="cp-num" id="popup-num">1</div>
+    <span id="popup-title">Add your comment</span>
+  </div>
+  <textarea id="comment-text" placeholder="Describe what you'd like changed here…"></textarea>
+  <div class="cp-hint">Be as specific as you like — section name, wording, color, layout, etc.<br>Press Ctrl+Enter to save quickly.</div>
+  <div class="cp-actions">
+    <button id="btn-save-comment">Save Comment</button>
+    <button id="btn-cancel-comment">Cancel</button>
+  </div>
+  <button id="btn-delete-comment">Delete this comment</button>
+</div>
+
+<!-- ── SIDE PANEL -->
+<div id="review-panel">
+  <div class="rp-header">
+    Feedback Notes &nbsp;<span id="panel-count">(0)</span>
+    <button id="btn-close-panel">×</button>
+  </div>
+  <div id="rp-empty-state">
+    <div class="rp-empty-icon">💬</div>
+    <div>No comments yet.<br>Click <strong>Add Comment</strong> then<br>click anywhere on the page.</div>
+  </div>
+  <div id="comment-list" style="display:none"></div>
+</div>
+
+<!-- ── TOAST -->
+<div id="copy-toast">✅ &nbsp;Feedback copied! Paste it into an email to Ashley.</div>
+
+<script>
+(function() {
+  const STORE_KEY = 'bgs_review_v2';
+  let comments  = JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
+  let reviewMode = false;
+  let editingId  = null;
+  let pendingX = 0, pendingY = 0;
+
+  const btnToggle   = document.getElementById('btn-toggle-mode');
+  const modeHint    = document.getElementById('mode-hint');
+  const btnPanel    = document.getElementById('btn-panel-toggle');
+  const btnCopy     = document.getElementById('btn-copy-report');
+  const btnClearAll = document.getElementById('btn-clear-all');
+  const panel       = document.getElementById('review-panel');
+  const btnClose    = document.getElementById('btn-close-panel');
+  const popup       = document.getElementById('comment-popup');
+  const popupNum    = document.getElementById('popup-num');
+  const popupTitle  = document.getElementById('popup-title');
+  const textarea    = document.getElementById('comment-text');
+  const btnSave     = document.getElementById('btn-save-comment');
+  const btnCancel   = document.getElementById('btn-cancel-comment');
+  const btnDelete   = document.getElementById('btn-delete-comment');
+  const commentList = document.getElementById('comment-list');
+  const emptyState  = document.getElementById('rp-empty-state');
+  const toolbarCount= document.getElementById('toolbar-count');
+  const panelCount  = document.getElementById('panel-count');
+  const toast       = document.getElementById('copy-toast');
+
+  function save() { localStorage.setItem(STORE_KEY, JSON.stringify(comments)); }
+
+  // ── PINS
+  function renderPins() {
+    document.querySelectorAll('.comment-pin').forEach(p => p.remove());
+    comments.forEach(c => {
+      const pin = document.createElement('div');
+      pin.className = 'comment-pin' + (c.resolved ? ' resolved' : '');
+      pin.dataset.id = c.id;
+      pin.style.left = c.x + 'px';
+      pin.style.top  = c.y + 'px';
+      pin.innerHTML  = `<span class="pin-num">${c.num}</span>`;
+      pin.addEventListener('click', e => {
+        e.stopPropagation();
+        openEditPopup(c.id, e.clientX, e.clientY);
+      });
+      document.body.appendChild(pin);
+    });
+  }
+
+  // ── PANEL
+  function renderPanel() {
+    const n = comments.length;
+    toolbarCount.textContent = n;
+    panelCount.textContent   = '(' + n + ')';
+    if (n === 0) {
+      emptyState.style.display = 'flex';
+      commentList.style.display = 'none';
+      return;
+    }
+    emptyState.style.display  = 'none';
+    commentList.style.display = 'flex';
+    commentList.innerHTML = '';
+    [...comments].reverse().forEach(c => {
+      const el = document.createElement('div');
+      el.className = 'comment-item' + (c.resolved ? ' resolved' : '');
+      const time = new Date(c.ts).toLocaleString('en-US', {month:'short', day:'numeric', hour:'numeric', minute:'2-digit'});
+      el.innerHTML = `
+        <div class="ci-top">
+          <div class="ci-num">${c.num}</div>
+          <div style="font-size:12px;font-weight:700;color:#1D2B3A">${c.resolved ? '✓ Resolved' : 'Open'}</div>
+          <div class="ci-time">${time}</div>
+        </div>
+        <div class="ci-text">${c.text.replace(/\n/g,'<br>')}</div>
+        <div class="ci-actions">
+          <button class="ci-btn" onclick="bgsScrollToPin(${c.id})">📍 Find on page</button>
+          <button class="ci-btn resolve" onclick="bgsToggleResolve(${c.id})">${c.resolved ? 'Reopen' : '✓ Resolve'}</button>
+          <button class="ci-btn del" onclick="bgsDeleteComment(${c.id})">Delete</button>
+        </div>
+      `;
+      commentList.appendChild(el);
+    });
+  }
+
+  function renderAll() { renderPins(); renderPanel(); }
+
+  // ── TOGGLE MODE
+  btnToggle.addEventListener('click', () => {
+    reviewMode = !reviewMode;
+    document.body.classList.toggle('review-mode', reviewMode);
+    btnToggle.classList.toggle('active', reviewMode);
+    btnToggle.innerHTML = reviewMode ? '✕ &nbsp;Exit Comment Mode' : '✏️ &nbsp;Add Comment';
+    modeHint.classList.toggle('visible', reviewMode);
+    closePopup();
+  });
+
+  // ── CLICK TO ADD
+  document.addEventListener('click', e => {
+    if (!reviewMode) return;
+    if (e.target.closest('#review-toolbar') ||
+        e.target.closest('#comment-popup')  ||
+        e.target.closest('#review-panel')   ||
+        e.target.closest('.comment-pin')) return;
+
+    pendingX  = e.pageX;
+    pendingY  = e.pageY;
+    editingId = null;
+    popupNum.textContent  = comments.length + 1;
+    popupTitle.textContent = 'Add your comment';
+    textarea.value = '';
+    btnDelete.classList.remove('visible');
+    showPopup(e.clientX, e.clientY);
+    setTimeout(() => textarea.focus(), 60);
+  });
+
+  function showPopup(cx, cy) {
+    popup.classList.add('visible');
+    const pw = 330, ph = 260, vw = window.innerWidth, vh = window.innerHeight;
+    let left = cx + 16, top = cy + 16;
+    if (left + pw > vw - 10) left = cx - pw - 16;
+    if (top  + ph > vh - 10) top  = cy - ph - 16;
+    if (left < 10) left = 10;
+    if (top  < 60) top  = 60;
+    popup.style.left = left + 'px';
+    popup.style.top  = top  + 'px';
+  }
+
+  function closePopup() { popup.classList.remove('visible'); editingId = null; }
+
+  function openEditPopup(id, cx, cy) {
+    const c = comments.find(x => x.id === id);
+    if (!c) return;
+    editingId = id;
+    popupNum.textContent   = c.num;
+    popupTitle.textContent = 'Edit comment';
+    textarea.value = c.text;
+    btnDelete.classList.add('visible');
+    showPopup(cx, cy);
+    setTimeout(() => textarea.focus(), 60);
+  }
+  window.openEditPopup = openEditPopup;
+
+  // ── SAVE
+  btnSave.addEventListener('click', () => {
+    const text = textarea.value.trim();
+    if (!text) { textarea.style.borderColor = '#e05c2a'; return; }
+    textarea.style.borderColor = '';
+    if (editingId !== null) {
+      const c = comments.find(x => x.id === editingId);
+      if (c) c.text = text;
+    } else {
+      const id = Date.now();
+      comments.push({ id, num: comments.length + 1, x: pendingX, y: pendingY, text, resolved: false, ts: id });
+    }
+    save(); renderAll(); closePopup();
+  });
+
+  btnCancel.addEventListener('click', closePopup);
+
+  textarea.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') btnSave.click();
+    if (e.key === 'Escape') closePopup();
+  });
+
+  btnDelete.addEventListener('click', () => {
+    if (editingId === null) return;
+    bgsDeleteComment(editingId);
+    closePopup();
+  });
+
+  window.bgsDeleteComment = function(id) {
+    comments = comments.filter(c => c.id !== id);
+    comments.forEach((c, i) => c.num = i + 1);
+    save(); renderAll();
+  };
+
+  window.bgsToggleResolve = function(id) {
+    const c = comments.find(x => x.id === id);
+    if (c) { c.resolved = !c.resolved; save(); renderAll(); }
+  };
+
+  window.bgsScrollToPin = function(id) {
+    const pin = document.querySelector(`.comment-pin[data-id="${id}"]`);
+    if (!pin) return;
+    const pinTop = parseInt(pin.style.top);
+    window.scrollTo({ top: Math.max(0, pinTop - window.innerHeight / 2), behavior: 'smooth' });
+    pin.style.transform = 'rotate(-45deg) translate(-50%,-50%) scale(1.5)';
+    setTimeout(() => { pin.style.transform = ''; }, 900);
+  };
+
+  // ── PANEL TOGGLE
+  btnPanel.addEventListener('click',  () => panel.classList.toggle('open'));
+  btnClose.addEventListener('click',  () => panel.classList.remove('open'));
+
+  // ── COPY REPORT
+  btnCopy.addEventListener('click', () => {
+    if (comments.length === 0) { showToast('No comments yet — add some first!', '#B8860B'); return; }
+    const open = comments.filter(c => !c.resolved);
+    const done = comments.filter(c =>  c.resolved);
+    const lines = [
+      '=== BGS Attorney Website — Client Feedback ===',
+      `Date: ${new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}`,
+      `Total: ${comments.length} comment(s)  |  Open: ${open.length}  |  Resolved: ${done.length}`,
+      '',
+    ];
+    if (open.length) {
+      lines.push('── OPEN FEEDBACK ──');
+      open.forEach(c => { lines.push(`[${c.num}] ${c.text}`); lines.push(''); });
+    }
+    if (done.length) {
+      lines.push('── RESOLVED ──');
+      done.forEach(c => { lines.push(`[${c.num}] ✓ ${c.text}`); lines.push(''); });
+    }
+    lines.push('──────────────────────────────');
+    lines.push('Please send to: ashley.suitecyan@gmail.com');
+    const report = lines.join('\n');
+    navigator.clipboard.writeText(report)
+      .then(() => showToast('✅  Copied! Paste into an email to ashley.suitecyan@gmail.com'))
+      .catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = report; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('✅  Copied! Paste into an email to ashley.suitecyan@gmail.com');
+      });
+  });
+
+  // ── CLEAR ALL
+  btnClearAll.addEventListener('click', () => {
+    if (!comments.length) return;
+    if (!confirm('Delete all comments? This cannot be undone.')) return;
+    comments = []; save(); renderAll();
+  });
+
+  function showToast(msg, bg = '#22863a') {
+    toast.textContent = msg; toast.style.background = bg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3500);
+  }
+
   renderAll();
 })();
 </script>
