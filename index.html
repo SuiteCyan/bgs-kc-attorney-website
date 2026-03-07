@@ -2072,6 +2072,8 @@
   .bgs-item.done .it-num { background:#22863a; }
   .bgs-item .it-status { font-size:11px; font-weight:700; color:#1D2B3A; }
   .bgs-item .it-time   { font-size:10px; color:#bbb; margin-left:auto; }
+  .bgs-item .it-section { font-size:10.5px; font-weight:700; color:#B8860B; text-transform:uppercase;
+    letter-spacing:.5px; margin-bottom:4px; }
   .bgs-item .it-text   { font-size:12.5px; color:#333; line-height:1.45; }
   .bgs-item .it-btns   { display:flex; gap:7px; margin-top:7px; flex-wrap:wrap; }
   .ib { font-size:11px; font-family:inherit; border:1px solid #dde2ea; background:#fff;
@@ -2191,6 +2193,7 @@ window.addEventListener('load', function() {
     var notes = JSON.parse(localStorage.getItem(KEY) || '[]');
     var mode  = false;
     var editId = null, px = 0, py = 0;
+    var currentSection = '';
 
     var btnAdd    = document.getElementById('bgs-btn-add');
     var hint      = document.getElementById('bgs-hint');
@@ -2230,7 +2233,7 @@ window.addEventListener('load', function() {
       ];
       if (open.length) {
         lines.push('-- OPEN FEEDBACK --');
-        open.forEach(function(c){ lines.push('[' + c.num + '] ' + c.text); lines.push(''); });
+        open.forEach(function(c){ lines.push('[' + c.num + '] ' + (c.section ? '📍 '+c.section+' — ' : '') + c.text); lines.push(''); });
       }
       if (done.length) {
         lines.push('-- RESOLVED --');
@@ -2277,6 +2280,7 @@ window.addEventListener('load', function() {
             '<div class="it-status">' + (c.done ? '&#10003; Resolved' : 'Open') + '</div>' +
             '<div class="it-time">' + dt + '</div>' +
           '</div>' +
+          (c.section ? '<div class="it-section">&#9679; ' + c.section + '</div>' : '') +
           '<div class="it-text">' + c.text.replace(/\n/g,'<br>') + '</div>' +
           '<div class="it-btns">' +
             '<button class="ib" onclick="bgsGo(' + c.id + ')">&#128205; Find</button>' +
@@ -2307,9 +2311,13 @@ window.addEventListener('load', function() {
       if (t.closest && (t.closest('#bgs-toolbar')||t.closest('#bgs-popup')||t.closest('#bgs-panel')||t.closest('.bgs-pin')||t.closest('#bgs-send-modal'))) return;
       e.stopPropagation(); e.preventDefault();
       px = e.pageX; py = e.pageY;
+      /* detect which site section was clicked */
+      var _sEl = e.target ? (e.target.closest('section')||e.target.closest('header')||e.target.closest('footer')) : null;
+      var _sMap = {hero:'Hero Banner',why:'Why Choose Us',services:'Practice Areas',process:'What to Expect / Peace of Mind',testimonials:'Testimonials',features:'Attorney Bio',appointment:'Schedule / Contact Form'};
+      currentSection = _sEl ? (_sMap[_sEl.id] || _sEl.tagName.toLowerCase()) : 'General';
       editId = null;
       ppNum.textContent = notes.length + 1;
-      ppTitle.textContent = 'Add your comment';
+      ppTitle.textContent = 'Add your comment' + (currentSection ? ' · ' + currentSection : '');
       ta.value = ''; btnDel.classList.remove('on');
       showPopup(e.clientX, e.clientY);
       setTimeout(function(){ ta.focus(); }, 50);
@@ -2343,7 +2351,7 @@ window.addEventListener('load', function() {
         var c=notes.find(function(x){return x.id===editId;}); if(c) c.text=text;
       } else {
         var id=Date.now();
-        notes.push({id:id, num:notes.length+1, x:px, y:py, text:text, done:false, ts:id});
+        notes.push({id:id, num:notes.length+1, x:px, y:py, text:text, section:currentSection, done:false, ts:id});
       }
       save(); renderAll(); closePopup();
     });
