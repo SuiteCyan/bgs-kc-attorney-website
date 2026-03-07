@@ -1938,1176 +1938,11 @@
   });
 </script>
 
-</body>
-</html>
-<!-- ═══════════════════════════════════════════════════════════
-     CLIENT REVIEW ANNOTATION SYSTEM
-     Ashley Bush · BGS Attorney Website · Client Review Mode
-════════════════════════════════════════════════════════════ -->
-<style>
-  /* ── REVIEW TOOLBAR */
-  #review-toolbar {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 99999;
-    background: #1D2B3A;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 20px;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.35);
-    font-family: 'Segoe UI', Arial, sans-serif;
-  }
-  #review-toolbar .rt-logo {
-    font-size: 13px;
-    font-weight: 800;
-    color: #B8860B;
-    letter-spacing: 0.5px;
-    margin-right: 4px;
-  }
-  #review-toolbar .rt-sep {
-    width: 1px; height: 22px;
-    background: rgba(255,255,255,0.15);
-    margin: 0 4px;
-  }
-  #review-toolbar .rt-label {
-    font-size: 12px;
-    color: rgba(255,255,255,0.6);
-  }
-  #review-toolbar .rt-count {
-    font-size: 13px;
-    font-weight: 700;
-    color: #B8860B;
-    min-width: 24px;
-  }
-  #btn-toggle-mode {
-    display: flex; align-items: center; gap: 7px;
-    background: #B8860B; color: #fff;
-    font-family: inherit; font-size: 13px; font-weight: 700;
-    padding: 7px 16px; border: none; border-radius: 7px;
-    cursor: pointer; transition: background 0.2s;
-    letter-spacing: 0.2px;
-  }
-  #btn-toggle-mode:hover { background: #9a6f09; }
-  #btn-toggle-mode.active { background: #e05c2a; }
-  #btn-toggle-mode.active:hover { background: #c24a1e; }
-  #btn-panel-toggle {
-    display: flex; align-items: center; gap: 6px;
-    background: rgba(255,255,255,0.1); color: #fff;
-    font-family: inherit; font-size: 13px; font-weight: 600;
-    padding: 7px 14px; border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 7px; cursor: pointer; transition: background 0.15s;
-  }
-  #btn-panel-toggle:hover { background: rgba(255,255,255,0.18); }
-  #btn-copy-report {
-    display: flex; align-items: center; gap: 6px;
-    background: #22863a; color: #fff;
-    font-family: inherit; font-size: 13px; font-weight: 700;
-    padding: 7px 16px; border: none; border-radius: 7px;
-    cursor: pointer; transition: background 0.2s; margin-left: auto;
-  }
-  #btn-copy-report:hover { background: #1a6b2e; }
-  #btn-clear-all {
-    background: none; color: rgba(255,255,255,0.4);
-    font-family: inherit; font-size: 12px;
-    border: none; cursor: pointer; text-decoration: underline;
-  }
-  #btn-clear-all:hover { color: rgba(255,255,255,0.7); }
-  #mode-hint {
-    font-size: 12px;
-    color: #e05c2a;
-    font-weight: 600;
-    animation: pulse 1.5s ease-in-out infinite;
-    display: none;
-  }
-  #mode-hint.visible { display: block; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-
-  /* ── PAGE OFFSET (push content below toolbar) */
-  body { padding-top: 52px !important; }
-
-  /* ── REVIEW CURSOR */
-  body.review-mode { cursor: crosshair !important; }
-  body.review-mode a, body.review-mode button { cursor: crosshair !important; }
-
-  /* ── COMMENT PIN */
-  .comment-pin {
-    position: absolute;
-    width: 28px; height: 28px;
-    background: #e05c2a;
-    border: 2.5px solid #fff;
-    border-radius: 50% 50% 50% 0;
-    transform: rotate(-45deg) translate(-50%, -50%);
-    cursor: pointer;
-    z-index: 9000;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.35);
-    transition: transform 0.15s, box-shadow 0.15s;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .comment-pin:hover {
-    transform: rotate(-45deg) translate(-50%,-50%) scale(1.15);
-    box-shadow: 0 4px 14px rgba(0,0,0,0.45);
-  }
-  .comment-pin .pin-num {
-    transform: rotate(45deg);
-    font-size: 11px; font-weight: 800;
-    color: #fff; font-family: Arial, sans-serif;
-    line-height: 1;
-  }
-
-  /* ── COMMENT POPUP (add/edit) */
-  #comment-popup {
-    position: fixed;
-    z-index: 99998;
-    background: #fff;
-    border-radius: 14px;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.12);
-    padding: 20px;
-    width: 320px;
-    display: none;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    animation: popIn 0.18s ease;
-  }
-  @keyframes popIn { from{opacity:0;transform:scale(0.92)} to{opacity:1;transform:scale(1)} }
-  #comment-popup.visible { display: block; }
-  #comment-popup .cp-header {
-    font-size: 13px; font-weight: 800; color: #1D2B3A;
-    margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
-  }
-  #comment-popup .cp-num {
-    background: #e05c2a; color: #fff;
-    width: 22px; height: 22px; border-radius: 50%;
-    font-size: 11px; font-weight: 800;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  #comment-popup textarea {
-    width: 100%; box-sizing: border-box;
-    border: 1.5px solid #DDE2EA; border-radius: 8px;
-    padding: 10px 12px; font-family: inherit;
-    font-size: 13px; line-height: 1.5; resize: vertical;
-    min-height: 90px; color: #1D2B3A;
-    outline: none; transition: border-color 0.15s;
-  }
-  #comment-popup textarea:focus { border-color: #B8860B; }
-  #comment-popup .cp-hint {
-    font-size: 11px; color: #aaa; margin-top: 6px; line-height: 1.4;
-  }
-  #comment-popup .cp-actions {
-    display: flex; gap: 8px; margin-top: 14px;
-  }
-  #btn-save-comment {
-    flex: 1; background: #1D2B3A; color: #fff;
-    font-family: inherit; font-size: 13px; font-weight: 700;
-    padding: 9px; border: none; border-radius: 8px; cursor: pointer;
-    transition: background 0.15s;
-  }
-  #btn-save-comment:hover { background: #B8860B; }
-  #btn-cancel-comment {
-    background: #F2F4F7; color: #666;
-    font-family: inherit; font-size: 13px;
-    padding: 9px 14px; border: none; border-radius: 8px; cursor: pointer;
-  }
-  #btn-cancel-comment:hover { background: #E4E7EE; }
-  #btn-delete-comment {
-    background: none; color: #e05c2a;
-    font-family: inherit; font-size: 12px;
-    border: none; cursor: pointer; text-decoration: underline;
-    margin-top: 8px; display: none;
-  }
-  #btn-delete-comment.visible { display: block; }
-
-  /* ── SIDE PANEL */
-  #review-panel {
-    position: fixed;
-    top: 52px; right: 0;
-    width: 320px; height: calc(100vh - 52px);
-    background: #fff;
-    box-shadow: -4px 0 24px rgba(0,0,0,0.12);
-    z-index: 9998;
-    display: flex; flex-direction: column;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    transform: translateX(100%);
-    transition: transform 0.25s ease;
-  }
-  #review-panel.open { transform: translateX(0); }
-  #review-panel .rp-header {
-    background: #1D2B3A;
-    color: #fff;
-    padding: 16px 18px;
-    font-size: 14px; font-weight: 800;
-    display: flex; align-items: center; justify-content: space-between;
-    flex-shrink: 0;
-  }
-  #review-panel .rp-header span { color: #B8860B; }
-  #btn-close-panel {
-    background: none; border: none; color: rgba(255,255,255,0.6);
-    font-size: 20px; cursor: pointer; line-height: 1; padding: 0 4px;
-  }
-  #btn-close-panel:hover { color: #fff; }
-  #review-panel .rp-empty {
-    flex: 1; display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    color: #bbb; font-size: 14px; text-align: center;
-    padding: 32px; gap: 12px;
-  }
-  #review-panel .rp-empty .rp-empty-icon { font-size: 40px; }
-  #comment-list {
-    flex: 1; overflow-y: auto; padding: 12px;
-    display: flex; flex-direction: column; gap: 10px;
-  }
-  .comment-item {
-    background: #F7F9FC;
-    border: 1px solid #E4E8EF;
-    border-left: 4px solid #e05c2a;
-    border-radius: 9px;
-    padding: 12px 14px;
-    cursor: pointer;
-    transition: background 0.12s;
-  }
-  .comment-item:hover { background: #EFF3F8; }
-  .comment-item.resolved {
-    border-left-color: #22863a;
-    opacity: 0.65;
-  }
-  .comment-item .ci-top {
-    display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
-  }
-  .comment-item .ci-num {
-    background: #e05c2a; color: #fff;
-    width: 20px; height: 20px; border-radius: 50%;
-    font-size: 10px; font-weight: 800;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .comment-item.resolved .ci-num { background: #22863a; }
-  .comment-item .ci-time { font-size: 11px; color: #aaa; margin-left: auto; }
-  .comment-item .ci-text {
-    font-size: 13px; color: #333; line-height: 1.45;
-  }
-  .comment-item .ci-actions {
-    display: flex; gap: 8px; margin-top: 8px;
-  }
-  .ci-btn {
-    font-size: 11px; font-family: inherit;
-    border: 1px solid #DDE2EA; background: #fff;
-    padding: 3px 9px; border-radius: 5px;
-    cursor: pointer; color: #555; transition: background 0.12s;
-  }
-  .ci-btn:hover { background: #F2F4F7; }
-  .ci-btn.resolve { border-color: #22863a; color: #22863a; }
-  .ci-btn.resolve:hover { background: #EEF7F2; }
-  .ci-btn.del { border-color: #e05c2a; color: #e05c2a; }
-  .ci-btn.del:hover { background: #FFF0E8; }
-
-  /* ── COPY SUCCESS TOAST */
-  #copy-toast {
-    position: fixed; bottom: 32px; left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: #22863a; color: #fff;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    font-size: 14px; font-weight: 700;
-    padding: 12px 24px; border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    opacity: 0; transition: opacity 0.2s, transform 0.2s;
-    pointer-events: none; z-index: 99999;
-  }
-  #copy-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-</style>
-
-<!-- ── TOOLBAR -->
-<div id="review-toolbar">
-  <div class="rt-logo">BGS Review</div>
-  <div class="rt-sep"></div>
-  <button id="btn-toggle-mode">✏️ &nbsp;Add Comment</button>
-  <span id="mode-hint">Click anywhere on the page to pin a comment</span>
-  <div class="rt-sep"></div>
-  <span class="rt-label">Comments:</span>
-  <span class="rt-count" id="toolbar-count">0</span>
-  <button id="btn-panel-toggle">📋 &nbsp;View All</button>
-  <button id="btn-copy-report">📤 &nbsp;Send Feedback to Ashley</button>
-  <button id="btn-clear-all">Clear all</button>
-</div>
-
-<!-- ── COMMENT POPUP -->
-<div id="comment-popup">
-  <div class="cp-header">
-    <div class="cp-num" id="popup-num">1</div>
-    <span id="popup-title">Add your comment</span>
-  </div>
-  <textarea id="comment-text" placeholder="Describe what you'd like changed here…"></textarea>
-  <div class="cp-hint">Be as specific as you like — section name, wording, color, layout, etc.</div>
-  <div class="cp-actions">
-    <button id="btn-save-comment">Save Comment</button>
-    <button id="btn-cancel-comment">Cancel</button>
-  </div>
-  <button id="btn-delete-comment">Delete this comment</button>
-</div>
-
-<!-- ── SIDE PANEL -->
-<div id="review-panel">
-  <div class="rp-header">
-    Feedback Notes &nbsp;<span id="panel-count">(0)</span>
-    <button id="btn-close-panel">×</button>
-  </div>
-  <div id="comment-list-wrap">
-    <div id="rp-empty-state" class="rp-empty">
-      <div class="rp-empty-icon">💬</div>
-      <div>No comments yet.<br>Click <strong>Add Comment</strong>, then click<br>anywhere on the page.</div>
-    </div>
-    <div id="comment-list" style="display:none"></div>
-  </div>
-</div>
-
-<!-- ── TOAST -->
-<div id="copy-toast">✅ &nbsp;Feedback copied! Paste it into an email to Ashley.</div>
-
-<script>
-(function() {
-  // ── STATE
-  const STORE_KEY = 'bgs_review_comments';
-  let comments = JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
-  let reviewMode = false;
-  let editingId = null;
-  let pendingX = 0, pendingY = 0;
-
-  // ── ELEMENTS
-  const toolbar      = document.getElementById('review-toolbar');
-  const btnToggle    = document.getElementById('btn-toggle-mode');
-  const modeHint     = document.getElementById('mode-hint');
-  const btnPanel     = document.getElementById('btn-panel-toggle');
-  const btnCopy      = document.getElementById('btn-copy-report');
-  const btnClearAll  = document.getElementById('btn-clear-all');
-  const panel        = document.getElementById('review-panel');
-  const btnClose     = document.getElementById('btn-close-panel');
-  const popup        = document.getElementById('comment-popup');
-  const popupNum     = document.getElementById('popup-num');
-  const popupTitle   = document.getElementById('popup-title');
-  const textarea     = document.getElementById('comment-text');
-  const btnSave      = document.getElementById('btn-save-comment');
-  const btnCancel    = document.getElementById('btn-cancel-comment');
-  const btnDelete    = document.getElementById('btn-delete-comment');
-  const commentList  = document.getElementById('comment-list');
-  const emptyState   = document.getElementById('rp-empty-state');
-  const toolbarCount = document.getElementById('toolbar-count');
-  const panelCount   = document.getElementById('panel-count');
-  const toast        = document.getElementById('copy-toast');
-
-  // ── SAVE / LOAD
-  function save() { localStorage.setItem(STORE_KEY, JSON.stringify(comments)); }
-
-  // ── RENDER PINS
-  function renderPins() {
-    document.querySelectorAll('.comment-pin').forEach(p => p.remove());
-    comments.forEach(c => {
-      const pin = document.createElement('div');
-      pin.className = 'comment-pin';
-      pin.dataset.id = c.id;
-      pin.style.left = c.x + 'px';
-      pin.style.top  = c.y + 'px';
-      if (c.resolved) pin.style.background = '#22863a';
-      pin.innerHTML = `<span class="pin-num">${c.num}</span>`;
-      pin.addEventListener('click', e => {
-        e.stopPropagation();
-        openEditPopup(c.id, e.clientX, e.clientY);
-      });
-      document.body.appendChild(pin);
-    });
-  }
-
-  // ── RENDER PANEL
-  function renderPanel() {
-    const n = comments.length;
-    toolbarCount.textContent = n;
-    panelCount.textContent   = '(' + n + ')';
-    if (n === 0) {
-      emptyState.style.display = 'flex';
-      commentList.style.display = 'none';
-      return;
-    }
-    emptyState.style.display = 'none';
-    commentList.style.display = 'flex';
-    commentList.innerHTML = '';
-    [...comments].reverse().forEach(c => {
-      const d = document.createElement('div');
-      d.className = 'comment-item' + (c.resolved ? ' resolved' : '');
-      const time = new Date(c.ts).toLocaleString('en-US', {month:'short', day:'numeric', hour:'numeric', minute:'2-digit'});
-      d.innerHTML = `
-        <div class="ci-top">
-          <div class="ci-num">${c.num}</div>
-          <div style="font-size:12px;font-weight:700;color:#1D2B3A">${c.resolved ? '✓ Resolved' : 'Open'}</div>
-          <div class="ci-time">${time}</div>
-        </div>
-        <div class="ci-text">${c.text.replace(/\n/g,'<br>')}</div>
-        <div class="ci-actions">
-          <button class="ci-btn" onclick="scrollToPin(${c.id})">📍 Find on page</button>
-          <button class="ci-btn resolve" onclick="toggleResolve(${c.id})">${c.resolved ? 'Reopen' : '✓ Resolve'}</button>
-          <button class="ci-btn del" onclick="deleteComment(${c.id})">Delete</button>
-        </div>
-      `;
-      commentList.appendChild(d);
-    });
-  }
-
-  function renderAll() { renderPins(); renderPanel(); }
-
-  // ── TOGGLE REVIEW MODE
-  btnToggle.addEventListener('click', () => {
-    reviewMode = !reviewMode;
-    document.body.classList.toggle('review-mode', reviewMode);
-    btnToggle.classList.toggle('active', reviewMode);
-    btnToggle.textContent = reviewMode ? '✕  Cancel' : '✏️  Add Comment';
-    modeHint.classList.toggle('visible', reviewMode);
-    closePopup();
-  });
-
-  // ── CLICK TO ADD COMMENT
-  document.body.addEventListener('click', e => {
-    if (!reviewMode) return;
-    if (e.target.closest('#review-toolbar') ||
-        e.target.closest('#comment-popup') ||
-        e.target.closest('#review-panel') ||
-        e.target.closest('.comment-pin')) return;
-
-    // Position relative to document
-    pendingX = e.pageX;
-    pendingY = e.pageY;
-    editingId = null;
-
-    const nextNum = comments.length + 1;
-    popupNum.textContent = nextNum;
-    popupTitle.textContent = 'Add your comment';
-    textarea.value = '';
-    btnDelete.classList.remove('visible');
-    showPopup(e.clientX, e.clientY);
-    textarea.focus();
-  });
-
-  // ── SHOW POPUP near click, keep in viewport
-  function showPopup(cx, cy) {
-    popup.classList.add('visible');
-    const pw = 320, ph = 240;
-    const vw = window.innerWidth, vh = window.innerHeight;
-    let left = cx + 14;
-    let top  = cy + 14;
-    if (left + pw > vw - 10) left = cx - pw - 14;
-    if (top  + ph > vh - 10) top  = cy - ph - 14;
-    if (left < 10) left = 10;
-    if (top  < 58) top  = 58;
-    popup.style.left = left + 'px';
-    popup.style.top  = top  + 'px';
-  }
-
-  function closePopup() {
-    popup.classList.remove('visible');
-    editingId = null;
-  }
-
-  // ── OPEN EDIT POPUP
-  function openEditPopup(id, cx, cy) {
-    const c = comments.find(x => x.id === id);
-    if (!c) return;
-    editingId = id;
-    popupNum.textContent  = c.num;
-    popupTitle.textContent = 'Edit comment';
-    textarea.value = c.text;
-    btnDelete.classList.add('visible');
-    showPopup(cx, cy);
-    textarea.focus();
-  }
-  window.openEditPopup = openEditPopup;
-
-  // ── SAVE COMMENT
-  btnSave.addEventListener('click', () => {
-    const text = textarea.value.trim();
-    if (!text) { textarea.style.borderColor = '#e05c2a'; return; }
-    textarea.style.borderColor = '';
-
-    if (editingId !== null) {
-      const c = comments.find(x => x.id === editingId);
-      if (c) c.text = text;
-    } else {
-      const id = Date.now();
-      comments.push({
-        id, num: comments.length + 1,
-        x: pendingX, y: pendingY,
-        text, resolved: false, ts: id
-      });
-    }
-    save(); renderAll(); closePopup();
-  });
-
-  btnCancel.addEventListener('click', closePopup);
-
-  // ── SAVE ON ENTER (Ctrl/Cmd+Enter)
-  textarea.addEventListener('keydown', e => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') btnSave.click();
-    if (e.key === 'Escape') closePopup();
-  });
-
-  // ── DELETE
-  btnDelete.addEventListener('click', () => {
-    if (editingId === null) return;
-    deleteComment(editingId);
-    closePopup();
-  });
-  window.deleteComment = function(id) {
-    comments = comments.filter(c => c.id !== id);
-    // Re-number
-    comments.forEach((c, i) => c.num = i + 1);
-    save(); renderAll();
-  };
-
-  // ── RESOLVE TOGGLE
-  window.toggleResolve = function(id) {
-    const c = comments.find(x => x.id === id);
-    if (c) { c.resolved = !c.resolved; save(); renderAll(); }
-  };
-
-  // ── SCROLL TO PIN
-  window.scrollToPin = function(id) {
-    const pin = document.querySelector(`.comment-pin[data-id="${id}"]`);
-    if (pin) {
-      const y = parseInt(pin.style.top) - window.innerHeight / 2;
-      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
-      pin.style.transform = 'rotate(-45deg) translate(-50%,-50%) scale(1.4)';
-      setTimeout(() => { pin.style.transform = ''; }, 800);
-    }
-  };
-
-  // ── PANEL TOGGLE
-  btnPanel.addEventListener('click', () => panel.classList.toggle('open'));
-  btnClose.addEventListener('click', () => panel.classList.remove('open'));
-
-  // ── COPY REPORT
-  btnCopy.addEventListener('click', () => {
-    if (comments.length === 0) {
-      showToast('No comments to send yet!', '#B8860B'); return;
-    }
-    const open     = comments.filter(c => !c.resolved);
-    const resolved = comments.filter(c =>  c.resolved);
-    const lines = [
-      '=== BGS Attorney Website — Client Feedback ===',
-      `Date: ${new Date().toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'})}`,
-      `Total comments: ${comments.length}  |  Open: ${open.length}  |  Resolved: ${resolved.length}`,
-      '',
-    ];
-    if (open.length) {
-      lines.push('── OPEN FEEDBACK ──');
-      open.forEach(c => {
-        lines.push(`[${c.num}] ${c.text}`);
-        lines.push('');
-      });
-    }
-    if (resolved.length) {
-      lines.push('── RESOLVED ──');
-      resolved.forEach(c => {
-        lines.push(`[${c.num}] ✓ ${c.text}`);
-        lines.push('');
-      });
-    }
-    lines.push('─────────────────────────────');
-    lines.push('Reply to: ashley.suitecyan@gmail.com');
-    navigator.clipboard.writeText(lines.join('\n'))
-      .then(() => showToast('✅  Feedback copied! Paste it into an email to Ashley.', '#22863a'))
-      .catch(() => {
-        // fallback
-        const ta = document.createElement('textarea');
-        ta.value = lines.join('\n');
-        document.body.appendChild(ta);
-        ta.select(); document.execCommand('copy');
-        document.body.removeChild(ta);
-        showToast('✅  Feedback copied! Paste it into an email to Ashley.', '#22863a');
-      });
-  });
-
-  // ── CLEAR ALL
-  btnClearAll.addEventListener('click', () => {
-    if (!comments.length) return;
-    if (!confirm('Delete all comments? This cannot be undone.')) return;
-    comments = []; save(); renderAll();
-  });
-
-  // ── TOAST
-  function showToast(msg, bg = '#22863a') {
-    toast.textContent = msg;
-    toast.style.background = bg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3500);
-  }
-
-  // ── INIT
-  renderAll();
-})();
-</script>
-<!-- ═══════════════════════════════════════════════════════════
-     CLIENT REVIEW ANNOTATION SYSTEM
-     ashley.suitecyan@gmail.com · BGS Attorney Website
-════════════════════════════════════════════════════════════ -->
-<style>
-  /* ── Push site's fixed header below the review toolbar (toolbar = 52px tall) */
-  header {
-    top: 52px !important;
-  }
-  /* ── Increase body top padding to account for toolbar (52px) + site header (72px) */
-  body {
-    padding-top: calc(52px + 72px) !important;
-    padding-bottom: 0 !important;
-  }
-
-  /* ── REVIEW TOOLBAR */
-  #review-toolbar {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 99999;
-    height: 52px;
-    background: #1D2B3A;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 0 20px;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.45);
-    font-family: 'Segoe UI', Arial, sans-serif;
-  }
-  #review-toolbar .rt-logo {
-    font-size: 13px;
-    font-weight: 800;
-    color: #B8860B;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
-  }
-  #review-toolbar .rt-sep {
-    width: 1px; height: 22px;
-    background: rgba(255,255,255,0.15);
-    margin: 0 4px;
-    flex-shrink: 0;
-  }
-  #review-toolbar .rt-label {
-    font-size: 12px;
-    color: rgba(255,255,255,0.55);
-    white-space: nowrap;
-  }
-  #review-toolbar .rt-count {
-    font-size: 13px;
-    font-weight: 700;
-    color: #B8860B;
-    min-width: 20px;
-  }
-  #btn-toggle-mode {
-    display: flex; align-items: center; gap: 7px;
-    background: #B8860B; color: #fff;
-    font-family: inherit; font-size: 13px; font-weight: 700;
-    padding: 6px 16px; border: none; border-radius: 7px;
-    cursor: pointer; transition: background 0.2s;
-    white-space: nowrap; flex-shrink: 0;
-  }
-  #btn-toggle-mode:hover { background: #9a6f09; }
-  #btn-toggle-mode.active { background: #e05c2a; }
-  #btn-toggle-mode.active:hover { background: #c24a1e; }
-  #btn-panel-toggle {
-    display: flex; align-items: center; gap: 6px;
-    background: rgba(255,255,255,0.1); color: #fff;
-    font-family: inherit; font-size: 13px; font-weight: 600;
-    padding: 6px 14px; border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 7px; cursor: pointer; transition: background 0.15s;
-    white-space: nowrap; flex-shrink: 0;
-  }
-  #btn-panel-toggle:hover { background: rgba(255,255,255,0.18); }
-  #btn-copy-report {
-    display: flex; align-items: center; gap: 6px;
-    background: #22863a; color: #fff;
-    font-family: inherit; font-size: 13px; font-weight: 700;
-    padding: 6px 16px; border: none; border-radius: 7px;
-    cursor: pointer; transition: background 0.2s;
-    white-space: nowrap; flex-shrink: 0; margin-left: auto;
-  }
-  #btn-copy-report:hover { background: #1a6b2e; }
-  #btn-clear-all {
-    background: none; color: rgba(255,255,255,0.35);
-    font-family: inherit; font-size: 12px;
-    border: none; cursor: pointer; text-decoration: underline;
-    white-space: nowrap; flex-shrink: 0;
-  }
-  #btn-clear-all:hover { color: rgba(255,255,255,0.65); }
-  #mode-hint {
-    font-size: 12px; color: #e8a060; font-weight: 600;
-    animation: bgs-pulse 1.5s ease-in-out infinite;
-    display: none; white-space: nowrap;
-  }
-  #mode-hint.visible { display: block; }
-  @keyframes bgs-pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-
-  /* ── REVIEW CURSOR */
-  body.review-mode,
-  body.review-mode * { cursor: crosshair !important; }
-
-  /* ── COMMENT PIN */
-  .comment-pin {
-    position: absolute;
-    width: 30px; height: 30px;
-    background: #e05c2a;
-    border: 2.5px solid #fff;
-    border-radius: 50% 50% 50% 0;
-    transform: rotate(-45deg) translate(-50%, -50%);
-    cursor: pointer !important;
-    z-index: 9000;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.4);
-    transition: transform 0.15s, box-shadow 0.15s;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .comment-pin:hover {
-    transform: rotate(-45deg) translate(-50%,-50%) scale(1.2);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.5);
-  }
-  .comment-pin.resolved { background: #22863a; }
-  .comment-pin .pin-num {
-    transform: rotate(45deg);
-    font-size: 11px; font-weight: 800;
-    color: #fff; font-family: Arial, sans-serif; line-height: 1;
-  }
-
-  /* ── COMMENT POPUP */
-  #comment-popup {
-    position: fixed;
-    z-index: 99998;
-    background: #fff;
-    border-radius: 14px;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.12);
-    padding: 20px;
-    width: 320px;
-    display: none;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    animation: bgs-popIn 0.18s ease;
-  }
-  @keyframes bgs-popIn { from{opacity:0;transform:scale(0.92)} to{opacity:1;transform:scale(1)} }
-  #comment-popup.visible { display: block; }
-  #comment-popup .cp-header {
-    font-size: 13px; font-weight: 800; color: #1D2B3A;
-    margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
-  }
-  #comment-popup .cp-num {
-    background: #e05c2a; color: #fff;
-    width: 22px; height: 22px; border-radius: 50%;
-    font-size: 11px; font-weight: 800;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  #comment-popup textarea {
-    width: 100%; box-sizing: border-box;
-    border: 1.5px solid #DDE2EA; border-radius: 8px;
-    padding: 10px 12px; font-family: inherit;
-    font-size: 13px; line-height: 1.5; resize: vertical;
-    min-height: 90px; color: #1D2B3A;
-    outline: none; transition: border-color 0.15s;
-  }
-  #comment-popup textarea:focus { border-color: #B8860B; }
-  #comment-popup .cp-hint {
-    font-size: 11px; color: #aaa; margin-top: 6px; line-height: 1.4;
-  }
-  #comment-popup .cp-actions {
-    display: flex; gap: 8px; margin-top: 14px;
-  }
-  #btn-save-comment {
-    flex: 1; background: #1D2B3A; color: #fff;
-    font-family: inherit; font-size: 13px; font-weight: 700;
-    padding: 9px; border: none; border-radius: 8px; cursor: pointer;
-    transition: background 0.15s;
-  }
-  #btn-save-comment:hover { background: #B8860B; }
-  #btn-cancel-comment {
-    background: #F2F4F7; color: #666;
-    font-family: inherit; font-size: 13px;
-    padding: 9px 14px; border: none; border-radius: 8px; cursor: pointer;
-  }
-  #btn-cancel-comment:hover { background: #E4E7EE; }
-  #btn-delete-comment {
-    background: none; color: #e05c2a;
-    font-family: inherit; font-size: 12px;
-    border: none; cursor: pointer; text-decoration: underline;
-    margin-top: 8px; display: none;
-  }
-  #btn-delete-comment.visible { display: block; }
-
-  /* ── SIDE PANEL */
-  #review-panel {
-    position: fixed;
-    top: 52px; right: 0;
-    width: 320px; height: calc(100vh - 52px);
-    background: #fff;
-    box-shadow: -4px 0 24px rgba(0,0,0,0.12);
-    z-index: 9998;
-    display: flex; flex-direction: column;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    transform: translateX(100%);
-    transition: transform 0.25s ease;
-  }
-  #review-panel.open { transform: translateX(0); }
-  #review-panel .rp-header {
-    background: #1D2B3A; color: #fff;
-    padding: 16px 18px;
-    font-size: 14px; font-weight: 800;
-    display: flex; align-items: center; justify-content: space-between;
-    flex-shrink: 0;
-  }
-  #review-panel .rp-header span { color: #B8860B; }
-  #btn-close-panel {
-    background: none; border: none; color: rgba(255,255,255,0.6);
-    font-size: 20px; cursor: pointer; line-height: 1; padding: 0 4px;
-  }
-  #btn-close-panel:hover { color: #fff; }
-  #rp-empty-state {
-    flex: 1; display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    color: #bbb; font-size: 14px; text-align: center; padding: 32px; gap: 12px;
-  }
-  #rp-empty-state .rp-empty-icon { font-size: 40px; }
-  #comment-list {
-    flex: 1; overflow-y: auto; padding: 12px;
-    display: flex; flex-direction: column; gap: 10px;
-  }
-  .comment-item {
-    background: #F7F9FC; border: 1px solid #E4E8EF;
-    border-left: 4px solid #e05c2a;
-    border-radius: 9px; padding: 12px 14px;
-    cursor: pointer; transition: background 0.12s;
-  }
-  .comment-item:hover { background: #EFF3F8; }
-  .comment-item.resolved { border-left-color: #22863a; opacity: 0.65; }
-  .comment-item .ci-top {
-    display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
-  }
-  .comment-item .ci-num {
-    background: #e05c2a; color: #fff;
-    width: 20px; height: 20px; border-radius: 50%;
-    font-size: 10px; font-weight: 800;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  }
-  .comment-item.resolved .ci-num { background: #22863a; }
-  .comment-item .ci-time { font-size: 11px; color: #aaa; margin-left: auto; }
-  .comment-item .ci-text { font-size: 13px; color: #333; line-height: 1.45; }
-  .comment-item .ci-actions { display: flex; gap: 8px; margin-top: 8px; }
-  .ci-btn {
-    font-size: 11px; font-family: inherit;
-    border: 1px solid #DDE2EA; background: #fff;
-    padding: 3px 9px; border-radius: 5px;
-    cursor: pointer; color: #555; transition: background 0.12s;
-  }
-  .ci-btn:hover { background: #F2F4F7; }
-  .ci-btn.resolve { border-color: #22863a; color: #22863a; }
-  .ci-btn.resolve:hover { background: #EEF7F2; }
-  .ci-btn.del { border-color: #e05c2a; color: #e05c2a; }
-  .ci-btn.del:hover { background: #FFF0E8; }
-
-  /* ── TOAST */
-  #copy-toast {
-    position: fixed; bottom: 32px; left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: #22863a; color: #fff;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    font-size: 14px; font-weight: 700;
-    padding: 12px 24px; border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    opacity: 0; transition: opacity 0.25s, transform 0.25s;
-    pointer-events: none; z-index: 999999;
-    white-space: nowrap;
-  }
-  #copy-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-</style>
-
-<!-- ── TOOLBAR (floats above everything, including site header) -->
-<div id="review-toolbar">
-  <div class="rt-logo">✦ BGS Review</div>
-  <div class="rt-sep"></div>
-  <button id="btn-toggle-mode">✏️ &nbsp;Add Comment</button>
-  <span id="mode-hint">↓ Click anywhere on the page to pin a comment</span>
-  <div class="rt-sep"></div>
-  <span class="rt-label">Comments:</span>
-  <span class="rt-count" id="toolbar-count">0</span>
-  <button id="btn-panel-toggle">📋 &nbsp;View All</button>
-  <button id="btn-copy-report">📤 &nbsp;Send Feedback to Ashley</button>
-  <button id="btn-clear-all">Clear all</button>
-</div>
-
-<!-- ── COMMENT POPUP -->
-<div id="comment-popup">
-  <div class="cp-header">
-    <div class="cp-num" id="popup-num">1</div>
-    <span id="popup-title">Add your comment</span>
-  </div>
-  <textarea id="comment-text" placeholder="Describe what you'd like changed here…"></textarea>
-  <div class="cp-hint">Be as specific as you like — section name, wording, color, layout, etc.<br>Press Ctrl+Enter to save quickly.</div>
-  <div class="cp-actions">
-    <button id="btn-save-comment">Save Comment</button>
-    <button id="btn-cancel-comment">Cancel</button>
-  </div>
-  <button id="btn-delete-comment">Delete this comment</button>
-</div>
-
-<!-- ── SIDE PANEL -->
-<div id="review-panel">
-  <div class="rp-header">
-    Feedback Notes &nbsp;<span id="panel-count">(0)</span>
-    <button id="btn-close-panel">×</button>
-  </div>
-  <div id="rp-empty-state">
-    <div class="rp-empty-icon">💬</div>
-    <div>No comments yet.<br>Click <strong>Add Comment</strong> then<br>click anywhere on the page.</div>
-  </div>
-  <div id="comment-list" style="display:none"></div>
-</div>
-
-<!-- ── TOAST -->
-<div id="copy-toast">✅ &nbsp;Feedback copied! Paste it into an email to Ashley.</div>
-
-<script>
-(function() {
-  const STORE_KEY = 'bgs_review_v2';
-  let comments  = JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
-  let reviewMode = false;
-  let editingId  = null;
-  let pendingX = 0, pendingY = 0;
-
-  const btnToggle   = document.getElementById('btn-toggle-mode');
-  const modeHint    = document.getElementById('mode-hint');
-  const btnPanel    = document.getElementById('btn-panel-toggle');
-  const btnCopy     = document.getElementById('btn-copy-report');
-  const btnClearAll = document.getElementById('btn-clear-all');
-  const panel       = document.getElementById('review-panel');
-  const btnClose    = document.getElementById('btn-close-panel');
-  const popup       = document.getElementById('comment-popup');
-  const popupNum    = document.getElementById('popup-num');
-  const popupTitle  = document.getElementById('popup-title');
-  const textarea    = document.getElementById('comment-text');
-  const btnSave     = document.getElementById('btn-save-comment');
-  const btnCancel   = document.getElementById('btn-cancel-comment');
-  const btnDelete   = document.getElementById('btn-delete-comment');
-  const commentList = document.getElementById('comment-list');
-  const emptyState  = document.getElementById('rp-empty-state');
-  const toolbarCount= document.getElementById('toolbar-count');
-  const panelCount  = document.getElementById('panel-count');
-  const toast       = document.getElementById('copy-toast');
-
-  function save() { localStorage.setItem(STORE_KEY, JSON.stringify(comments)); }
-
-  // ── PINS
-  function renderPins() {
-    document.querySelectorAll('.comment-pin').forEach(p => p.remove());
-    comments.forEach(c => {
-      const pin = document.createElement('div');
-      pin.className = 'comment-pin' + (c.resolved ? ' resolved' : '');
-      pin.dataset.id = c.id;
-      pin.style.left = c.x + 'px';
-      pin.style.top  = c.y + 'px';
-      pin.innerHTML  = `<span class="pin-num">${c.num}</span>`;
-      pin.addEventListener('click', e => {
-        e.stopPropagation();
-        openEditPopup(c.id, e.clientX, e.clientY);
-      });
-      document.body.appendChild(pin);
-    });
-  }
-
-  // ── PANEL
-  function renderPanel() {
-    const n = comments.length;
-    toolbarCount.textContent = n;
-    panelCount.textContent   = '(' + n + ')';
-    if (n === 0) {
-      emptyState.style.display = 'flex';
-      commentList.style.display = 'none';
-      return;
-    }
-    emptyState.style.display  = 'none';
-    commentList.style.display = 'flex';
-    commentList.innerHTML = '';
-    [...comments].reverse().forEach(c => {
-      const el = document.createElement('div');
-      el.className = 'comment-item' + (c.resolved ? ' resolved' : '');
-      const time = new Date(c.ts).toLocaleString('en-US', {month:'short', day:'numeric', hour:'numeric', minute:'2-digit'});
-      el.innerHTML = `
-        <div class="ci-top">
-          <div class="ci-num">${c.num}</div>
-          <div style="font-size:12px;font-weight:700;color:#1D2B3A">${c.resolved ? '✓ Resolved' : 'Open'}</div>
-          <div class="ci-time">${time}</div>
-        </div>
-        <div class="ci-text">${c.text.replace(/\n/g,'<br>')}</div>
-        <div class="ci-actions">
-          <button class="ci-btn" onclick="bgsScrollToPin(${c.id})">📍 Find on page</button>
-          <button class="ci-btn resolve" onclick="bgsToggleResolve(${c.id})">${c.resolved ? 'Reopen' : '✓ Resolve'}</button>
-          <button class="ci-btn del" onclick="bgsDeleteComment(${c.id})">Delete</button>
-        </div>
-      `;
-      commentList.appendChild(el);
-    });
-  }
-
-  function renderAll() { renderPins(); renderPanel(); }
-
-  // ── TOGGLE MODE
-  btnToggle.addEventListener('click', () => {
-    reviewMode = !reviewMode;
-    document.body.classList.toggle('review-mode', reviewMode);
-    btnToggle.classList.toggle('active', reviewMode);
-    btnToggle.innerHTML = reviewMode ? '✕ &nbsp;Exit Comment Mode' : '✏️ &nbsp;Add Comment';
-    modeHint.classList.toggle('visible', reviewMode);
-    closePopup();
-  });
-
-  // ── CLICK TO ADD
-  document.addEventListener('click', e => {
-    if (!reviewMode) return;
-    if (e.target.closest('#review-toolbar') ||
-        e.target.closest('#comment-popup')  ||
-        e.target.closest('#review-panel')   ||
-        e.target.closest('.comment-pin')) return;
-
-    pendingX  = e.pageX;
-    pendingY  = e.pageY;
-    editingId = null;
-    popupNum.textContent  = comments.length + 1;
-    popupTitle.textContent = 'Add your comment';
-    textarea.value = '';
-    btnDelete.classList.remove('visible');
-    showPopup(e.clientX, e.clientY);
-    setTimeout(() => textarea.focus(), 60);
-  });
-
-  function showPopup(cx, cy) {
-    popup.classList.add('visible');
-    const pw = 330, ph = 260, vw = window.innerWidth, vh = window.innerHeight;
-    let left = cx + 16, top = cy + 16;
-    if (left + pw > vw - 10) left = cx - pw - 16;
-    if (top  + ph > vh - 10) top  = cy - ph - 16;
-    if (left < 10) left = 10;
-    if (top  < 60) top  = 60;
-    popup.style.left = left + 'px';
-    popup.style.top  = top  + 'px';
-  }
-
-  function closePopup() { popup.classList.remove('visible'); editingId = null; }
-
-  function openEditPopup(id, cx, cy) {
-    const c = comments.find(x => x.id === id);
-    if (!c) return;
-    editingId = id;
-    popupNum.textContent   = c.num;
-    popupTitle.textContent = 'Edit comment';
-    textarea.value = c.text;
-    btnDelete.classList.add('visible');
-    showPopup(cx, cy);
-    setTimeout(() => textarea.focus(), 60);
-  }
-  window.openEditPopup = openEditPopup;
-
-  // ── SAVE
-  btnSave.addEventListener('click', () => {
-    const text = textarea.value.trim();
-    if (!text) { textarea.style.borderColor = '#e05c2a'; return; }
-    textarea.style.borderColor = '';
-    if (editingId !== null) {
-      const c = comments.find(x => x.id === editingId);
-      if (c) c.text = text;
-    } else {
-      const id = Date.now();
-      comments.push({ id, num: comments.length + 1, x: pendingX, y: pendingY, text, resolved: false, ts: id });
-    }
-    save(); renderAll(); closePopup();
-  });
-
-  btnCancel.addEventListener('click', closePopup);
-
-  textarea.addEventListener('keydown', e => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') btnSave.click();
-    if (e.key === 'Escape') closePopup();
-  });
-
-  btnDelete.addEventListener('click', () => {
-    if (editingId === null) return;
-    bgsDeleteComment(editingId);
-    closePopup();
-  });
-
-  window.bgsDeleteComment = function(id) {
-    comments = comments.filter(c => c.id !== id);
-    comments.forEach((c, i) => c.num = i + 1);
-    save(); renderAll();
-  };
-
-  window.bgsToggleResolve = function(id) {
-    const c = comments.find(x => x.id === id);
-    if (c) { c.resolved = !c.resolved; save(); renderAll(); }
-  };
-
-  window.bgsScrollToPin = function(id) {
-    const pin = document.querySelector(`.comment-pin[data-id="${id}"]`);
-    if (!pin) return;
-    const pinTop = parseInt(pin.style.top);
-    window.scrollTo({ top: Math.max(0, pinTop - window.innerHeight / 2), behavior: 'smooth' });
-    pin.style.transform = 'rotate(-45deg) translate(-50%,-50%) scale(1.5)';
-    setTimeout(() => { pin.style.transform = ''; }, 900);
-  };
-
-  // ── PANEL TOGGLE
-  btnPanel.addEventListener('click',  () => panel.classList.toggle('open'));
-  btnClose.addEventListener('click',  () => panel.classList.remove('open'));
-
-  // ── COPY REPORT
-  btnCopy.addEventListener('click', () => {
-    if (comments.length === 0) { showToast('No comments yet — add some first!', '#B8860B'); return; }
-    const open = comments.filter(c => !c.resolved);
-    const done = comments.filter(c =>  c.resolved);
-    const lines = [
-      '=== BGS Attorney Website — Client Feedback ===',
-      `Date: ${new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}`,
-      `Total: ${comments.length} comment(s)  |  Open: ${open.length}  |  Resolved: ${done.length}`,
-      '',
-    ];
-    if (open.length) {
-      lines.push('── OPEN FEEDBACK ──');
-      open.forEach(c => { lines.push(`[${c.num}] ${c.text}`); lines.push(''); });
-    }
-    if (done.length) {
-      lines.push('── RESOLVED ──');
-      done.forEach(c => { lines.push(`[${c.num}] ✓ ${c.text}`); lines.push(''); });
-    }
-    lines.push('──────────────────────────────');
-    lines.push('Please send to: ashley.suitecyan@gmail.com');
-    const report = lines.join('\n');
-    navigator.clipboard.writeText(report)
-      .then(() => showToast('✅  Copied! Paste into an email to ashley.suitecyan@gmail.com'))
-      .catch(() => {
-        const ta = document.createElement('textarea');
-        ta.value = report; ta.style.position = 'fixed'; ta.style.opacity = '0';
-        document.body.appendChild(ta); ta.select(); document.execCommand('copy');
-        document.body.removeChild(ta);
-        showToast('✅  Copied! Paste into an email to ashley.suitecyan@gmail.com');
-      });
-  });
-
-  // ── CLEAR ALL
-  btnClearAll.addEventListener('click', () => {
-    if (!comments.length) return;
-    if (!confirm('Delete all comments? This cannot be undone.')) return;
-    comments = []; save(); renderAll();
-  });
-
-  function showToast(msg, bg = '#22863a') {
-    toast.textContent = msg; toast.style.background = bg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3500);
-  }
-
-  renderAll();
-})();
-</script>
-
 <!-- ═══════════════════════════════════════════════════
      BGS CLIENT REVIEW SYSTEM  ·  ashley.suitecyan@gmail.com
 ════════════════════════════════════════════════════ -->
 <style>
-  /* ── Toolbar height = 50px. Push site's fixed header (72px) below it */
+  /* Toolbar = 50px. Push site's fixed header (72px) below it */
   #bgs-toolbar { position:fixed; top:0; left:0; right:0; z-index:2147483647;
     height:50px; background:#1D2B3A; display:flex; align-items:center;
     gap:10px; padding:0 18px; box-shadow:0 3px 18px rgba(0,0,0,.5);
@@ -3159,10 +1994,8 @@
   #bgs-hint.on { display:block; }
   @keyframes bgs-blink { 0%,100%{opacity:1} 50%{opacity:.35} }
 
-  /* crosshair cursor over everything when in review mode */
   body.bgs-mode, body.bgs-mode * { cursor:crosshair !important; }
 
-  /* ── PINS */
   .bgs-pin {
     position:absolute; width:32px; height:32px;
     background:#d94f20; border:2.5px solid #fff; border-radius:50% 50% 50% 0;
@@ -3172,11 +2005,10 @@
     display:flex; align-items:center; justify-content:center;
     transition:transform .15s, box-shadow .15s;
   }
-  .bgs-pin:hover { transform:rotate(-45deg) translate(-50%,-50%) scale(1.2); box-shadow:0 4px 16px rgba(0,0,0,.5); }
+  .bgs-pin:hover { transform:rotate(-45deg) translate(-50%,-50%) scale(1.2); }
   .bgs-pin.done  { background:#22863a; }
   .bgs-pin .bgs-pin-n { transform:rotate(45deg); font-size:11px; font-weight:800; color:#fff; font-family:Arial,sans-serif; }
 
-  /* ── POPUP */
   #bgs-popup {
     position:fixed; z-index:2147483646; background:#fff; border-radius:14px;
     box-shadow:0 8px 40px rgba(0,0,0,.24); padding:20px; width:320px;
@@ -3210,7 +2042,6 @@
     font-size:12px; cursor:pointer; text-decoration:underline; margin-top:8px; display:none; }
   #bgs-btn-del.on { display:block; }
 
-  /* ── SIDE PANEL */
   #bgs-panel {
     position:fixed; top:50px; right:0; width:310px; height:calc(100vh - 50px);
     background:#fff; box-shadow:-4px 0 24px rgba(0,0,0,.12); z-index:2147483644;
@@ -3251,7 +2082,45 @@
   .ib.del { border-color:#d94f20; color:#d94f20; }
   .ib.del:hover { background:#fff0e8; }
 
-  /* ── TOAST */
+  /* ── SEND MODAL (shown when mailto fails or feedback is long) */
+  #bgs-send-modal {
+    position:fixed; inset:0; z-index:2147483648;
+    background:rgba(0,0,0,.55); display:none;
+    align-items:center; justify-content:center;
+    font-family:'Segoe UI',Arial,sans-serif;
+  }
+  #bgs-send-modal.on { display:flex; }
+  #bgs-send-modal .sm-box {
+    background:#fff; border-radius:16px; padding:28px 28px 24px;
+    max-width:480px; width:90%; box-shadow:0 12px 48px rgba(0,0,0,.3);
+    animation:bgs-pop .2s ease;
+  }
+  #bgs-send-modal h3 { font-size:16px; font-weight:800; color:#1D2B3A; margin:0 0 6px; }
+  #bgs-send-modal p  { font-size:13px; color:#666; margin:0 0 14px; line-height:1.5; }
+  #bgs-send-modal textarea {
+    width:100%; box-sizing:border-box; border:1.5px solid #dde2ea; border-radius:8px;
+    padding:10px 12px; font-family:'Courier New',monospace; font-size:12px;
+    line-height:1.5; height:180px; resize:none; color:#333; outline:none;
+    background:#f8f9fb;
+  }
+  #bgs-send-modal .sm-row { display:flex; gap:10px; margin-top:14px; align-items:center; }
+  #bgs-btn-sm-copy {
+    flex:1; background:#1D2B3A; color:#fff; border:none; border-radius:8px;
+    font-family:inherit; font-size:13px; font-weight:700;
+    padding:10px; cursor:pointer; transition:background .15s;
+  }
+  #bgs-btn-sm-copy:hover { background:#B8860B; }
+  #bgs-btn-sm-email {
+    flex:1; background:#22863a; color:#fff; border:none; border-radius:8px;
+    font-family:inherit; font-size:13px; font-weight:700;
+    padding:10px; cursor:pointer; transition:background .15s;
+  }
+  #bgs-btn-sm-email:hover { background:#1a6b2e; }
+  #bgs-btn-sm-close {
+    background:none; border:none; color:#aaa; font-family:inherit;
+    font-size:12px; cursor:pointer; text-decoration:underline;
+  }
+
   #bgs-toast { position:fixed; bottom:28px; left:50%;
     transform:translateX(-50%) translateY(16px);
     background:#22863a; color:#fff; font-family:'Segoe UI',Arial,sans-serif;
@@ -3264,23 +2133,23 @@
 
 <!-- TOOLBAR -->
 <div id="bgs-toolbar">
-  <div class="tl-brand">✦ BGS Review</div>
+  <div class="tl-brand">&#10022; BGS Review</div>
   <div class="tl-sep"></div>
-  <button id="bgs-btn-add">✏️ &nbsp;Add Comment</button>
+  <button id="bgs-btn-add">&#9998; &nbsp;Add Comment</button>
   <span id="bgs-hint">&#8595; Click anywhere on the page to pin a comment</span>
   <div class="tl-sep"></div>
   <span class="tl-lbl">Comments:</span>
   <span class="tl-cnt" id="bgs-cnt">0</span>
-  <button id="bgs-btn-list">📋 &nbsp;View All</button>
-  <button id="bgs-btn-send">📤 &nbsp;Send Feedback to Ashley</button>
+  <button id="bgs-btn-list">&#128203; &nbsp;View All</button>
+  <button id="bgs-btn-send">&#128140; &nbsp;Send Feedback to Ashley</button>
   <button id="bgs-btn-clear">Clear all</button>
 </div>
 
 <!-- POPUP -->
 <div id="bgs-popup">
   <div class="pp-head"><div class="pp-num" id="bgs-pp-num">1</div><span id="bgs-pp-title">Add your comment</span></div>
-  <textarea id="bgs-ta" placeholder="Describe what you'd like changed here…"></textarea>
-  <div class="pp-hint">Be specific — section name, wording, colour, layout, etc. &nbsp;Ctrl+Enter to save.</div>
+  <textarea id="bgs-ta" placeholder="Describe what you'd like changed here&#8230;"></textarea>
+  <div class="pp-hint">Be specific &#8212; section name, wording, colour, layout, etc. &nbsp;Ctrl+Enter to save.</div>
   <div class="pp-row">
     <button id="bgs-btn-save">Save</button>
     <button id="bgs-btn-cancel">Cancel</button>
@@ -3292,45 +2161,86 @@
 <div id="bgs-panel">
   <div class="pan-hd">Feedback Notes &nbsp;<span id="bgs-pan-cnt">(0)</span>
     <button id="bgs-btn-close">&#215;</button></div>
-  <div id="bgs-empty"><div class="ei">💬</div>
+  <div id="bgs-empty"><div class="ei">&#128172;</div>
     <div>No comments yet.<br>Click <strong>Add Comment</strong> then<br>click anywhere on the page.</div></div>
   <div id="bgs-list" style="display:none"></div>
+</div>
+
+<!-- SEND MODAL (fallback for long reports) -->
+<div id="bgs-send-modal">
+  <div class="sm-box">
+    <h3>&#128140; Send Your Feedback to Ashley</h3>
+    <p>Your email app didn&#8217;t open automatically. Copy the report below and paste it into a new email to <strong>ashley.suitecyan@gmail.com</strong></p>
+    <textarea id="bgs-report-ta" readonly></textarea>
+    <div class="sm-row">
+      <button id="bgs-btn-sm-copy">&#128203; Copy Report</button>
+      <button id="bgs-btn-sm-email">&#128140; Open Email App</button>
+      <button id="bgs-btn-sm-close">Close</button>
+    </div>
+  </div>
 </div>
 
 <!-- TOAST -->
 <div id="bgs-toast"></div>
 
 <script>
-/* BGS Review System — initialises after full page load */
 window.addEventListener('load', function() {
   try {
     var KEY   = 'bgs_rv3';
+    var TO    = 'ashley.suitecyan@gmail.com';
     var notes = JSON.parse(localStorage.getItem(KEY) || '[]');
     var mode  = false;
-    var editId = null;
-    var px = 0, py = 0;
+    var editId = null, px = 0, py = 0;
 
-    var btnAdd   = document.getElementById('bgs-btn-add');
-    var hint     = document.getElementById('bgs-hint');
-    var btnList  = document.getElementById('bgs-btn-list');
-    var btnSend  = document.getElementById('bgs-btn-send');
-    var btnClear = document.getElementById('bgs-btn-clear');
-    var panel    = document.getElementById('bgs-panel');
-    var btnClose = document.getElementById('bgs-btn-close');
-    var popup    = document.getElementById('bgs-popup');
-    var ppNum    = document.getElementById('bgs-pp-num');
-    var ppTitle  = document.getElementById('bgs-pp-title');
-    var ta       = document.getElementById('bgs-ta');
-    var btnSave  = document.getElementById('bgs-btn-save');
-    var btnCan   = document.getElementById('bgs-btn-cancel');
-    var btnDel   = document.getElementById('bgs-btn-del');
-    var list     = document.getElementById('bgs-list');
-    var empty    = document.getElementById('bgs-empty');
-    var cnt      = document.getElementById('bgs-cnt');
-    var panCnt   = document.getElementById('bgs-pan-cnt');
-    var toast    = document.getElementById('bgs-toast');
+    var btnAdd    = document.getElementById('bgs-btn-add');
+    var hint      = document.getElementById('bgs-hint');
+    var btnList   = document.getElementById('bgs-btn-list');
+    var btnSend   = document.getElementById('bgs-btn-send');
+    var btnClear  = document.getElementById('bgs-btn-clear');
+    var panel     = document.getElementById('bgs-panel');
+    var btnClose  = document.getElementById('bgs-btn-close');
+    var popup     = document.getElementById('bgs-popup');
+    var ppNum     = document.getElementById('bgs-pp-num');
+    var ppTitle   = document.getElementById('bgs-pp-title');
+    var ta        = document.getElementById('bgs-ta');
+    var btnSave   = document.getElementById('bgs-btn-save');
+    var btnCan    = document.getElementById('bgs-btn-cancel');
+    var btnDel    = document.getElementById('bgs-btn-del');
+    var list      = document.getElementById('bgs-list');
+    var empty     = document.getElementById('bgs-empty');
+    var cnt       = document.getElementById('bgs-cnt');
+    var panCnt    = document.getElementById('bgs-pan-cnt');
+    var toast     = document.getElementById('bgs-toast');
+    var sendModal = document.getElementById('bgs-send-modal');
+    var reportTa  = document.getElementById('bgs-report-ta');
+    var btnSmCopy = document.getElementById('bgs-btn-sm-copy');
+    var btnSmEmail= document.getElementById('bgs-btn-sm-email');
+    var btnSmClose= document.getElementById('bgs-btn-sm-close');
 
     function save() { try { localStorage.setItem(KEY, JSON.stringify(notes)); } catch(e){} }
+
+    function buildReport() {
+      var open = notes.filter(function(c){ return !c.done; });
+      var done = notes.filter(function(c){ return  c.done; });
+      var lines = [
+        '=== BGS Attorney Website - Client Feedback ===',
+        'Date: ' + new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}),
+        'Total: ' + notes.length + ' comment(s)  |  Open: ' + open.length + '  |  Resolved: ' + done.length,
+        ''
+      ];
+      if (open.length) {
+        lines.push('-- OPEN FEEDBACK --');
+        open.forEach(function(c){ lines.push('[' + c.num + '] ' + c.text); lines.push(''); });
+      }
+      if (done.length) {
+        lines.push('-- RESOLVED --');
+        done.forEach(function(c){ lines.push('[' + c.num + '] (resolved) ' + c.text); lines.push(''); });
+      }
+      lines.push('--------------------------------');
+      lines.push('Sent by: B. Garry Stewart');
+      lines.push('Reply to: ' + TO);
+      return lines.join('\n');
+    }
 
     /* ── PINS */
     function renderPins() {
@@ -3350,25 +2260,18 @@ window.addEventListener('load', function() {
       });
     }
 
-    /* ── PANEL */
     function renderPanel() {
       var n = notes.length;
       cnt.textContent    = n;
       panCnt.textContent = '(' + n + ')';
-      if (n === 0) {
-        empty.style.display = 'flex';
-        list.style.display  = 'none';
-        return;
-      }
-      empty.style.display = 'none';
-      list.style.display  = 'flex';
+      if (n === 0) { empty.style.display='flex'; list.style.display='none'; return; }
+      empty.style.display = 'none'; list.style.display = 'flex';
       list.innerHTML = '';
-      var rev = notes.slice().reverse();
-      rev.forEach(function(c) {
-        var d   = document.createElement('div');
-        d.className = 'bgs-item' + (c.done ? ' done' : '');
-        var dt  = new Date(c.ts).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
-        d.innerHTML =
+      notes.slice().reverse().forEach(function(c) {
+        var el = document.createElement('div');
+        el.className = 'bgs-item' + (c.done ? ' done' : '');
+        var dt = new Date(c.ts).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+        el.innerHTML =
           '<div class="it-top">' +
             '<div class="it-num">' + c.num + '</div>' +
             '<div class="it-status">' + (c.done ? '&#10003; Resolved' : 'Open') + '</div>' +
@@ -3380,178 +2283,153 @@ window.addEventListener('load', function() {
             '<button class="ib res" onclick="bgsRes(' + c.id + ')">' + (c.done ? 'Reopen' : '&#10003; Resolve') + '</button>' +
             '<button class="ib del" onclick="bgsDel(' + c.id + ')">Delete</button>' +
           '</div>';
-        list.appendChild(d);
+        list.appendChild(el);
       });
     }
 
     function renderAll() { renderPins(); renderPanel(); }
 
-    /* ── TOGGLE MODE */
+    /* ── MODE TOGGLE */
     btnAdd.addEventListener('click', function(e) {
       e.stopPropagation();
       mode = !mode;
       document.body.classList.toggle('bgs-mode', mode);
       btnAdd.classList.toggle('on', mode);
-      btnAdd.innerHTML = mode ? '&#10005; &nbsp;Exit Comment Mode' : '&#9998;&#65039; &nbsp;Add Comment';
+      btnAdd.innerHTML = mode ? '&#10005; &nbsp;Exit Comment Mode' : '&#9998; &nbsp;Add Comment';
       hint.classList.toggle('on', mode);
       closePopup();
     });
 
-    /* ── CLICK TO PIN — capture:true fires before all other handlers */
+    /* ── CLICK TO PIN — capture:true fires before page handlers */
     document.addEventListener('click', function(e) {
       if (!mode) return;
       var t = e.target;
-      if (t.closest && (
-        t.closest('#bgs-toolbar') ||
-        t.closest('#bgs-popup')   ||
-        t.closest('#bgs-panel')   ||
-        t.closest('.bgs-pin')
-      )) return;
-
-      e.stopPropagation();
-      e.preventDefault();
+      if (t.closest && (t.closest('#bgs-toolbar')||t.closest('#bgs-popup')||t.closest('#bgs-panel')||t.closest('.bgs-pin')||t.closest('#bgs-send-modal'))) return;
+      e.stopPropagation(); e.preventDefault();
       px = e.pageX; py = e.pageY;
       editId = null;
-      ppNum.textContent   = notes.length + 1;
+      ppNum.textContent = notes.length + 1;
       ppTitle.textContent = 'Add your comment';
-      ta.value = '';
-      btnDel.classList.remove('on');
+      ta.value = ''; btnDel.classList.remove('on');
       showPopup(e.clientX, e.clientY);
       setTimeout(function(){ ta.focus(); }, 50);
-    }, true); /* <-- capture:true is the key fix */
+    }, true);
 
     function showPopup(cx, cy) {
       popup.classList.add('on');
-      var pw = 330, ph = 260, vw = window.innerWidth, vh = window.innerHeight;
-      var left = cx + 16, top = cy + 16;
-      if (left + pw > vw - 10) left = cx - pw - 16;
-      if (top  + ph > vh - 10) top  = cy - ph - 16;
-      if (left < 10) left = 10;
-      if (top  < 56) top  = 56;
-      popup.style.left = left + 'px';
-      popup.style.top  = top  + 'px';
+      var pw=330, ph=260, vw=window.innerWidth, vh=window.innerHeight;
+      var left=cx+16, top=cy+16;
+      if (left+pw>vw-10) left=cx-pw-16;
+      if (top+ph>vh-10)  top=cy-ph-16;
+      if (left<10) left=10; if (top<56) top=56;
+      popup.style.left=left+'px'; popup.style.top=top+'px';
     }
 
-    function closePopup() { popup.classList.remove('on'); editId = null; }
+    function closePopup() { popup.classList.remove('on'); editId=null; }
 
     function openEdit(id, cx, cy) {
-      var c = notes.find(function(x){ return x.id === id; });
+      var c = notes.find(function(x){ return x.id===id; });
       if (!c) return;
-      editId = id;
-      ppNum.textContent   = c.num;
-      ppTitle.textContent = 'Edit comment';
-      ta.value = c.text;
-      btnDel.classList.add('on');
-      showPopup(cx, cy);
-      setTimeout(function(){ ta.focus(); }, 50);
+      editId=id; ppNum.textContent=c.num; ppTitle.textContent='Edit comment';
+      ta.value=c.text; btnDel.classList.add('on');
+      showPopup(cx, cy); setTimeout(function(){ ta.focus(); },50);
     }
 
     btnSave.addEventListener('click', function() {
       var text = ta.value.trim();
-      if (!text) { ta.style.borderColor = '#d94f20'; return; }
-      ta.style.borderColor = '';
-      if (editId !== null) {
-        var c = notes.find(function(x){ return x.id === editId; });
-        if (c) c.text = text;
+      if (!text) { ta.style.borderColor='#d94f20'; return; }
+      ta.style.borderColor='';
+      if (editId!==null) {
+        var c=notes.find(function(x){return x.id===editId;}); if(c) c.text=text;
       } else {
-        var id = Date.now();
-        notes.push({ id:id, num:notes.length+1, x:px, y:py, text:text, done:false, ts:id });
+        var id=Date.now();
+        notes.push({id:id, num:notes.length+1, x:px, y:py, text:text, done:false, ts:id});
       }
       save(); renderAll(); closePopup();
     });
 
     btnCan.addEventListener('click', closePopup);
-
-    ta.addEventListener('keydown', function(e) {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') btnSave.click();
-      if (e.key === 'Escape') closePopup();
+    ta.addEventListener('keydown', function(e){
+      if((e.ctrlKey||e.metaKey)&&e.key==='Enter') btnSave.click();
+      if(e.key==='Escape') closePopup();
     });
-
-    btnDel.addEventListener('click', function() {
-      if (editId === null) return;
-      bgsDel(editId); closePopup();
+    btnDel.addEventListener('click', function(){
+      if(editId===null) return; bgsDel(editId); closePopup();
     });
 
     window.bgsDel = function(id) {
-      notes = notes.filter(function(c){ return c.id !== id; });
-      notes.forEach(function(c,i){ c.num = i+1; });
-      save(); renderAll();
+      notes=notes.filter(function(c){return c.id!==id;});
+      notes.forEach(function(c,i){c.num=i+1;}); save(); renderAll();
     };
     window.bgsRes = function(id) {
-      var c = notes.find(function(x){ return x.id === id; });
-      if (c) { c.done = !c.done; save(); renderAll(); }
+      var c=notes.find(function(x){return x.id===id;});
+      if(c){c.done=!c.done; save(); renderAll();}
     };
     window.bgsGo = function(id) {
-      var pin = document.querySelector('.bgs-pin[data-id="'+id+'"]');
-      if (!pin) return;
-      var top = parseInt(pin.style.top) - window.innerHeight/2;
-      window.scrollTo({ top: Math.max(0,top), behavior:'smooth' });
-      pin.style.transform = 'rotate(-45deg) translate(-50%,-50%) scale(1.5)';
-      setTimeout(function(){ pin.style.transform=''; }, 900);
+      var pin=document.querySelector('.bgs-pin[data-id="'+id+'"]');
+      if(!pin) return;
+      window.scrollTo({top:Math.max(0,parseInt(pin.style.top)-window.innerHeight/2),behavior:'smooth'});
+      pin.style.transform='rotate(-45deg) translate(-50%,-50%) scale(1.5)';
+      setTimeout(function(){pin.style.transform='';},900);
     };
 
-    /* ── PANEL */
-    btnList.addEventListener('click',  function(){ panel.classList.toggle('on'); });
+    btnList.addEventListener('click', function(){ panel.classList.toggle('on'); });
     btnClose.addEventListener('click', function(){ panel.classList.remove('on'); });
 
-    /* ── SEND REPORT */
+    /* ── SEND FEEDBACK — opens email app with report pre-filled */
     btnSend.addEventListener('click', function() {
-      if (!notes.length) { showToast('No comments yet — add some first!', '#B8860B'); return; }
-      var open = notes.filter(function(c){ return !c.done; });
-      var done = notes.filter(function(c){ return  c.done; });
-      var lines = [
-        '=== BGS Attorney Website — Client Feedback ===',
-        'Date: ' + new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}),
-        'Total: ' + notes.length + ' comment(s)  |  Open: ' + open.length + '  |  Resolved: ' + done.length,
-        ''
-      ];
-      if (open.length) {
-        lines.push('-- OPEN FEEDBACK --');
-        open.forEach(function(c){ lines.push('[' + c.num + '] ' + c.text); lines.push(''); });
+      if (!notes.length) { showToast('No comments yet — add some first!','#B8860B'); return; }
+      var report = buildReport();
+      var subject = 'BGS Attorney Website — My Feedback (Round 1)';
+      var mailto  = 'mailto:' + TO + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(report);
+
+      if (mailto.length <= 2000) {
+        /* Short enough — open email app directly */
+        window.location.href = mailto;
+        showToast('Opening your email app&#8230;');
+      } else {
+        /* Too long for mailto — show the fallback modal with copy button */
+        reportTa.value = report;
+        sendModal.classList.add('on');
       }
-      if (done.length) {
-        lines.push('-- RESOLVED --');
-        done.forEach(function(c){ lines.push('[' + c.num + '] (resolved) ' + c.text); lines.push(''); });
-      }
-      lines.push('--------------------------------');
-      lines.push('Please send to: ashley.suitecyan@gmail.com');
-      var report = lines.join('\n');
-      try {
-        navigator.clipboard.writeText(report).then(function(){
-          showToast('Copied! Paste into an email to ashley.suitecyan@gmail.com');
-        }).catch(function(){ fallbackCopy(report); });
-      } catch(e) { fallbackCopy(report); }
     });
 
-    function fallbackCopy(text) {
-      var el = document.createElement('textarea');
-      el.value = text; el.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
-      document.body.appendChild(el); el.select();
-      try { document.execCommand('copy'); showToast('Copied! Paste into an email to ashley.suitecyan@gmail.com'); }
-      catch(e) { showToast('Could not copy — please screenshot your comments instead.', '#B8860B'); }
-      document.body.removeChild(el);
-    }
+    /* Modal copy button */
+    btnSmCopy.addEventListener('click', function() {
+      reportTa.select();
+      try {
+        navigator.clipboard.writeText(reportTa.value).then(function(){
+          showToast('Copied! Now paste into an email to ' + TO);
+        }).catch(function(){ document.execCommand('copy'); showToast('Copied!'); });
+      } catch(e) { document.execCommand('copy'); showToast('Copied!'); }
+    });
 
-    /* ── CLEAR */
+    /* Modal email button — retry mailto */
+    btnSmEmail.addEventListener('click', function() {
+      var subject = 'BGS Attorney Website — My Feedback (Round 1)';
+      window.location.href = 'mailto:' + TO + '?subject=' + encodeURIComponent(subject);
+      showToast('Opening your email app&#8230; paste the copied report into the body.');
+    });
+
+    btnSmClose.addEventListener('click', function(){ sendModal.classList.remove('on'); });
+    sendModal.addEventListener('click', function(e){ if(e.target===sendModal) sendModal.classList.remove('on'); });
+
     btnClear.addEventListener('click', function() {
-      if (!notes.length) return;
-      if (!confirm('Delete all comments? This cannot be undone.')) return;
-      notes = []; save(); renderAll();
+      if(!notes.length) return;
+      if(!confirm('Delete all comments? This cannot be undone.')) return;
+      notes=[]; save(); renderAll();
     });
 
     function showToast(msg, bg) {
-      toast.textContent = msg;
-      toast.style.background = bg || '#22863a';
-      toast.classList.add('on');
-      setTimeout(function(){ toast.classList.remove('on'); }, 3500);
+      toast.innerHTML=msg; toast.style.background=bg||'#22863a';
+      toast.classList.add('on'); setTimeout(function(){toast.classList.remove('on');},3500);
     }
 
     renderAll();
 
   } catch(err) {
-    /* If something went wrong, show a visible error in the toolbar */
-    var tb = document.getElementById('bgs-toolbar');
-    if (tb) tb.innerHTML += '<span style="color:#ff6b6b;font-size:12px;margin-left:12px;">Review system error: ' + err.message + '</span>';
+    var tb=document.getElementById('bgs-toolbar');
+    if(tb) tb.innerHTML+='<span style="color:#ff8080;font-size:12px;margin-left:12px;">Error: '+err.message+'</span>';
   }
 });
 </script>
