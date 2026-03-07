@@ -2097,8 +2097,18 @@
     max-width:480px; width:90%; box-shadow:0 12px 48px rgba(0,0,0,.3);
     animation:bgs-pop .2s ease;
   }
-  #bgs-send-modal h3 { font-size:16px; font-weight:800; color:#1D2B3A; margin:0 0 6px; }
+  #bgs-send-modal h3 { font-size:16px; font-weight:800; color:#1D2B3A; margin:0 0 16px; }
   #bgs-send-modal p  { font-size:13px; color:#666; margin:0 0 14px; line-height:1.5; }
+  .sm-step { display:flex; align-items:flex-start; gap:12px; margin-bottom:14px; }
+  .sm-step-num {
+    min-width:26px; height:26px; border-radius:50%; background:#B8860B; color:#fff;
+    font-size:13px; font-weight:800; display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; margin-top:1px;
+  }
+  .sm-step-body { font-size:13px; color:#444; line-height:1.5; }
+  .sm-step-body strong { color:#1D2B3A; }
+  .sm-fname { font-family:'Courier New',monospace; font-size:12px; background:#f0f4f8;
+    padding:2px 7px; border-radius:4px; color:#1D2B3A; }
   #bgs-send-modal textarea {
     width:100%; box-sizing:border-box; border:1.5px solid #dde2ea; border-radius:8px;
     padding:10px 12px; font-family:'Courier New',monospace; font-size:12px;
@@ -2172,13 +2182,40 @@
 <div id="bgs-send-modal">
   <div class="sm-box">
     <h3>&#128140; Send Your Feedback to Ashley</h3>
-    <p>Your email app didn&#8217;t open automatically. Copy the report below and paste it into a new email to <strong>ashley.suitecyan@gmail.com</strong></p>
-    <textarea id="bgs-report-ta" readonly></textarea>
-    <div class="sm-row">
-      <button id="bgs-btn-sm-copy">&#128203; Copy Report</button>
+
+    <!-- Step 1 -->
+    <div class="sm-step">
+      <div class="sm-step-num">1</div>
+      <div class="sm-step-body">
+        <strong>Annotated page downloaded &#10003;</strong><br>
+        <span class="sm-fname" id="bgs-sm-fname">bgs-review.html</span> was saved to your Downloads folder.
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="sm-step">
+      <div class="sm-step-num">2</div>
+      <div class="sm-step-body">
+        <strong>Open your email app below</strong> — then <em>attach that file</em> to the email before sending.
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="sm-step">
+      <div class="sm-step-num">3</div>
+      <div class="sm-step-body">
+        The email body will be pre-filled with your comments. Review and hit Send.
+      </div>
+    </div>
+
+    <div class="sm-row" style="margin-top:18px;">
       <button id="bgs-btn-sm-email">&#128140; Open Email App</button>
+      <button id="bgs-btn-sm-copy">&#128203; Copy Report Text</button>
       <button id="bgs-btn-sm-close">Close</button>
     </div>
+    <!-- hidden: stores mailto href and report text -->
+    <span id="bgs-sm-mailto" style="display:none"></span>
+    <textarea id="bgs-report-ta" style="display:none" readonly></textarea>
   </div>
 </div>
 
@@ -2385,21 +2422,41 @@ window.addEventListener('load', function() {
     btnClose.addEventListener('click', function(){ panel.classList.remove('on'); });
 
     /* ── SEND FEEDBACK — opens email app with report pre-filled */
+    /* ── SNAPSHOT DOWNLOAD — bakes current notes into the HTML so pins show on any machine */
+    function downloadSnapshot() {
+      var html = document.documentElement.outerHTML;
+      /* Embed current notes so they load correctly even without localStorage */
+      var safeNotes = JSON.stringify(notes).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+      html = html.replace(
+        "var notes = JSON.parse(localStorage.getItem(KEY) || '[]');",
+        "var notes = JSON.parse(localStorage.getItem(KEY) || '" + safeNotes + "');"
+      );
+      var blob = new Blob([html], {type:'text/html'});
+      var url  = URL.createObjectURL(blob);
+      var a    = document.createElement('a');
+      var dateStr = new Date().toISOString().slice(0,10);
+      a.href     = url;
+      a.download = 'bgs-review-' + dateStr + '.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 8000);
+      return a.download; /* return filename for modal */
+    }
+
     btnSend.addEventListener('click', function() {
       if (!notes.length) { showToast('No comments yet — add some first!','#B8860B'); return; }
-      var report = buildReport();
+      /* 1. Download the annotated page snapshot */
+      var fname = downloadSnapshot();
+      /* 2. Build email report for the body */
+      var report  = buildReport();
       var subject = 'BGS Attorney Website — My Feedback (Round 1)';
       var mailto  = 'mailto:' + TO + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(report);
-
-      if (mailto.length <= 2000) {
-        /* Short enough — open email app directly */
-        window.location.href = mailto;
-        showToast('Opening your email app&#8230;');
-      } else {
-        /* Too long for mailto — show the fallback modal with copy button */
-        reportTa.value = report;
-        sendModal.classList.add('on');
-      }
+      /* 3. Show the attach-and-send modal */
+      reportTa.value = report;
+      document.getElementById('bgs-sm-fname').textContent = fname;
+      document.getElementById('bgs-sm-mailto').setAttribute('data-href', mailto);
+      sendModal.classList.add('on');
     });
 
     /* Modal copy button */
@@ -2412,11 +2469,11 @@ window.addEventListener('load', function() {
       } catch(e) { document.execCommand('copy'); showToast('Copied!'); }
     });
 
-    /* Modal email button — retry mailto */
+    /* Modal email button — opens pre-filled mailto */
     btnSmEmail.addEventListener('click', function() {
-      var subject = 'BGS Attorney Website — My Feedback (Round 1)';
-      window.location.href = 'mailto:' + TO + '?subject=' + encodeURIComponent(subject);
-      showToast('Opening your email app&#8230; paste the copied report into the body.');
+      var href = document.getElementById('bgs-sm-mailto').getAttribute('data-href');
+      window.location.href = href || ('mailto:' + TO);
+      showToast('Opening your email app&#8230; remember to attach the downloaded file!');
     });
 
     btnSmClose.addEventListener('click', function(){ sendModal.classList.remove('on'); });
