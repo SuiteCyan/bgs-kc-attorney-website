@@ -1786,6 +1786,7 @@
       <h3>Send a Message</h3>
       <p class="form-sub">All submissions are confidential. Submitting this form does not create an attorney-client relationship.</p>
       <form name="contact-form" data-netlify="true">
+        <input type="hidden" name="form-name" value="contact-form">
       <div class="form-row">
         <div class="form-group">
           <label>First Name</label>
@@ -1931,8 +1932,21 @@
   });
 
   // ── FORM SUBMIT PLACEHOLDER
-  document.querySelector('.form-submit').addEventListener('click', () => {
-    alert('Thanks for your message! We will be in touch shortly.');
+  document.querySelector('form[name="contact-form"]').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var form = this;
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(new FormData(form)).toString()
+    })
+    .then(function() {
+      form.reset();
+      alert('Thank you! Your message has been received. We will be in touch shortly.');
+    })
+    .catch(function(error) {
+      alert('There was a problem submitting the form. Please try again or call us directly.');
+    });
   });
 </script>
 
