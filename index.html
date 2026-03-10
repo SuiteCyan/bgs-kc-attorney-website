@@ -174,18 +174,21 @@
 
   /* ── HERO ── */
   #hero {
-    min-height: 100vh;
+    min-height: auto;
     display: grid;
     grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr auto;
     position: relative;
     overflow: hidden;
   }
 
   .hero-left {
+    grid-column: 1;
+    grid-row: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 8rem 4rem 6rem 5rem;
+    padding: 1.5rem 4rem 2rem 5rem;
     position: relative;
     z-index: 2;
   }
@@ -235,7 +238,7 @@
     font-weight: 300;
     line-height: 1.7;
     color: var(--slate);
-    max-width: 440px;
+    max-width: none;
     margin-bottom: 2.5rem;
     opacity: 0;
     animation: fadeUp 0.8s ease 0.6s forwards;
@@ -297,8 +300,10 @@
   }
 
   .hero-trust-strip {
-    margin-top: 3.5rem;
-    padding-top: 2rem;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    margin-top: 0;
+    padding: 2rem 5rem;
     border-top: 1px solid rgba(255,255,255,0.08);
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -338,17 +343,20 @@
 
 
   .hero-right {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero-image-area {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, #2a2820 0%, #1a1914 50%, #0e0d0b 100%);
+    grid-column: 2;
+    grid-row: 1;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: transparent;
+    padding: 1.5rem 2rem;
+  }
+
+  .hero-image-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
   }
 
   .hero-image-area::before {
@@ -361,8 +369,8 @@
   }
 
   .hero-photo-placeholder {
-    width: 340px;
-    height: 480px;
+    width: 520px;
+    height: 520px;
     border: 1px solid rgba(204,155,37,0.25);
     display: flex;
     flex-direction: column;
@@ -480,9 +488,10 @@
   }
 
   .why-pillars {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 1.5rem;
+    margin-top: 3rem;
   }
 
   .pillar {
@@ -1485,7 +1494,7 @@
   <div class="hero-left">
     <div class="hero-eyebrow">Kansas City, Missouri Attorney</div>
     <h1 class="hero-h1">
-      Protecting Your Rights<br>with <em>Clear, Strong</em><br>Advocacy
+      Protecting Your Rights<br>with <em>Clear,</em><br><em>Strong</em> Advocacy
     </h1>
     <p class="hero-sub">
       When the stakes are high, you need an attorney who communicates plainly, fights hard, and puts your interests first. B. Garry Stewart delivers focused legal representation across Kansas City and Missouri.
@@ -1494,32 +1503,35 @@
       <a href="#appointment" class="btn-hero-primary">Schedule a Consultation →</a>
       <a href="tel:(816) 651-4303" class="btn-outline">📞 (816) 651-4303</a>
     </div>
-    <div class="hero-trust-strip">
-      <div class="trust-item">
-        <span class="trust-num">40+</span>
-        <span class="trust-label">Years Experience</span>
-      </div>
-      <div class="trust-item">
-        <span class="trust-num">5★</span>
-        <span class="trust-label">5 Star Client Reviews</span>
-      </div>
-      <div class="trust-item">
-        <span class="trust-num">KC</span>
-        <span class="trust-label">Serving Greater Kansas City</span>
-      </div>
-      <div class="trust-item">
-        <span class="trust-num">MO</span>
-        <span class="trust-label">Licensed in Missouri</span>
-      </div>
-    </div>
   </div>
-  <div class="hero-right">
+  <div class="hero-right" style="flex-direction:column; gap:2rem; padding:4rem 3rem;">
     <div class="hero-image-area">
       <div class="hero-photo-placeholder" style="border:none; background:transparent; overflow:hidden; padding:0;">
-        <img src="images/professional-placeholder.jpg" alt="B. Garry Stewart, Attorney at Law" style="width:100%; height:100%; object-fit:cover; object-position:center top; display:block;">
+        <img src="images/bgs-headshot-pro.png" alt="B. Garry Stewart, Attorney at Law" style="width:100%; height:100%; object-fit:cover; object-position:center top; display:block; border-radius:8px;">
       </div>
     </div>
-    <div class="hero-divider"></div>
+    <div class="reveal" style="border-left:3px solid var(--gold); padding-left:1.5rem;">
+      <blockquote style="font-family:'Crimson Pro',serif; font-size:2.2rem; font-style:italic; color:var(--slate); margin:0; line-height:1.4;">"My goal is simple: to make sure every client feels heard, understood, and fiercely represented — from our first conversation to the last."</blockquote>
+      <div style="font-family:'Barlow',sans-serif; font-size:0.85rem; letter-spacing:.12em; color:var(--gold); margin-top:1rem; text-transform:uppercase;">— B. Garry Stewart, Esq.</div>
+    </div>
+  </div>
+  <div class="hero-trust-strip">
+    <div class="trust-item">
+      <span class="trust-num">40+</span>
+      <span class="trust-label">Years Experience</span>
+    </div>
+    <div class="trust-item">
+      <span class="trust-num">5★</span>
+      <span class="trust-label">5 Star Client Reviews</span>
+    </div>
+    <div class="trust-item">
+      <span class="trust-num">KC</span>
+      <span class="trust-label">Serving Greater Kansas City</span>
+    </div>
+    <div class="trust-item">
+      <span class="trust-num">MO</span>
+      <span class="trust-label">Licensed in Missouri</span>
+    </div>
   </div>
 </section>
 
@@ -1530,7 +1542,22 @@
       <div class="section-eyebrow reveal">Why Choose Us</div>
       <h2 class="section-title reveal reveal-delay-1">Advocacy Built<br>on Integrity</h2>
       <p class="section-sub reveal reveal-delay-2" style="margin-bottom: 2.5rem;">Every client deserves clarity, commitment, and a lawyer who picks up the phone. Here is what sets B. Garry Stewart apart in Kansas City.</p>
-      <div class="why-pillars">
+    </div>
+    <div class="why-statement reveal reveal-delay-2">
+      <div style="display:flex; align-items:center; gap:1.5rem;">
+        <div class="bar-admissions" style="flex:1;">
+          <h4>Bar Admissions &amp; Education</h4>
+          <ul>
+            <li>State Bar of Missouri, 1982</li>
+            <li>Missouri University School of Law, J.D., 1982</li>
+            <li>Missouri University, B.A., 1979</li>
+          </ul>
+        </div>
+        <img src="claude/images/BGS circle logo.png" alt="B. Garry Stewart Logo" style="width:250px; height:250px; object-fit:contain; flex-shrink:0;">
+      </div>
+    </div>
+  </div>
+  <div class="why-pillars">
         <div class="pillar reveal reveal-delay-1">
           <div class="pillar-icon"><img src="claude/images/icons/local-knowledge-icon.png" alt="" style="width:100%;height:100%;object-fit:contain;"></div>
           <div class="pillar-content">
@@ -1559,23 +1586,6 @@
             <p>You're not a case number. B. Garry Stewart personally handles your matter — not a paralegal, not an associate — from first call to final resolution.</p>
           </div>
         </div>
-      </div>
-    </div>
-    <div class="why-statement reveal reveal-delay-2">
-      <div class="quote-block">
-        <blockquote>"My goal is simple: to make sure every client feels heard, understood, and fiercely represented — from our first conversation to the last."</blockquote>
-        <div class="quote-attr">— B. Garry Stewart, Esq.</div>
-      </div>
-      <div class="bar-admissions">
-        <h4>Bar Admissions & Education</h4>
-        <ul>
-          <li>[State Bar of Missouri — Year]</li>
-          <li>[U.S. District Court, Western District of Missouri]</li>
-          <li>[Law School Name, J.D., Year]</li>
-          <li>[Undergraduate Institution, Year]</li>
-        </ul>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -1598,8 +1608,8 @@
     </a>
     <a href="#appointment" class="service-card reveal reveal-delay-2">
       <div class="service-num">02</div>
-      <h3>DUI / DWI Defense</h3>
-      <p>A DUI arrest doesn't have to mean a conviction. We challenge field sobriety tests, breathalyzer results, and procedural errors to fight for the best possible outcome.</p>
+      <h3>Estate Planning, Probate &amp; Administration</h3>
+      <p>Protecting your legacy and your loved ones starts with a clear plan. We guide families through wills, trusts, and the probate process with compassion and precision.</p>
       <div class="service-arrow">Contact for a Consultation →</div>
     </a>
     <a href="#appointment" class="service-card reveal reveal-delay-3">
@@ -1695,12 +1705,11 @@
 <section id="features">
   <div class="features-inner">
     <div class="features-left reveal">
-      <div class="section-eyebrow" style="color: rgba(0,0,0,0.45);">
-        <span style="display:block; width:24px; height:1px; background:rgba(0,0,0,0.3);"></span>
+      <div class="section-eyebrow">
         What to Expect
       </div>
       <h2 class="section-title" style="color: var(--white);">Every Client<br>Deserves Peace of Mind</h2>
-      <p class="section-sub" style="color: rgba(0,0,0,0.6); margin-bottom: 2rem;">From the first call to the final resolution, these are the standards we hold ourselves to — no exceptions.</p>
+      <p class="section-sub" style="color: var(--slate); margin-bottom: 2rem;">From the first call to the final resolution, these are the standards we hold ourselves to — no exceptions.</p>
       <a href="#appointment" class="btn-dark">Start Your Consultation</a>
     </div>
     <div class="features-list reveal reveal-delay-2">
@@ -1840,7 +1849,7 @@
       </div>
       <div class="footer-desc-col">
         <p>Experienced legal representation in Kansas City, Missouri. Serving Jackson County and surrounding areas with integrity, clarity, and dedication.</p>
-        <p class="footer-advert">Attorney Advertising | Missouri Bar No. [XXXXXX]</p>
+        <p class="footer-advert">Attorney Advertising | Missouri Bar No. 30511</p>
       </div>
     </div>
     <div class="footer-nav">
