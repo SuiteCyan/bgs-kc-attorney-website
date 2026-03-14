@@ -306,7 +306,7 @@
     padding: 2rem 5rem;
     border-top: 1px solid rgba(255,255,255,0.08);
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 0;
     opacity: 0;
     animation: fadeUp 0.8s ease 1s forwards;
@@ -489,7 +489,7 @@
 
   .why-pillars {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
     margin-top: 3rem;
   }
@@ -800,9 +800,8 @@
   }
 
   .testimonials-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
+    columns: 4;
+    column-gap: 1.5rem;
   }
 
   .testimonial-card {
@@ -812,6 +811,8 @@
     background: rgba(255,255,255,0.015);
     position: relative;
     transition: all 0.3s ease;
+    break-inside: avoid;
+    margin-bottom: 1.5rem;
   }
 
   .testimonial-card:hover {
@@ -1438,7 +1439,7 @@
     .hero-right { height: 400px; }
     .why-grid, .features-inner, .appointment-grid { grid-template-columns: 1fr; gap: 3rem; }
     .services-grid { grid-template-columns: repeat(2, 1fr); }
-    .testimonials-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .testimonials-grid { columns: 2; column-gap: 1rem; }
     .footer-top { grid-template-columns: auto 1fr 1fr; gap: 2rem; }
     nav { display: none; }
     .nav-toggle { display: block; }
@@ -1451,7 +1452,7 @@
     #hero { padding-top: 0; }
     .hero-left { padding: 7rem 1.5rem 3rem; }
     .services-grid { grid-template-columns: 1fr; }
-    .testimonials-grid { grid-template-columns: 1fr; }
+    .testimonials-grid { columns: 1; }
     .form-row { grid-template-columns: 1fr; }
     .footer-top { grid-template-columns: 1fr; gap: 2rem; }
     .footer-nav { display: none; }
@@ -1665,42 +1666,6 @@
   </div>
 </section>
 
-<!-- ── TESTIMONIALS ── -->
-<section id="testimonials">
-  <div class="testimonials-header">
-    <div class="section-eyebrow">Client Testimonials</div>
-    <h2 class="section-title reveal">What Clients Say</h2>
-    <p class="section-sub reveal reveal-delay-1" style="margin: 0 auto;">Real results for real Kansas City families and individuals. These are placeholder testimonials — attorney to confirm and replace with actual client reviews.</p>
-  </div>
-  <div class="testimonials-grid">
-    <div class="testimonial-card reveal reveal-delay-1">
-      <div class="stars">★★★★★</div>
-      <blockquote>It's been a few months, but he did a wonderful job on my conservatorship! Treated me more like family and that was great. Will use again :-)</blockquote>
-      <div class="testimonial-meta">
-        <div class="testimonial-name">TP</div>
-        <div class="testimonial-detail">Missouri</div>
-      </div>
-    </div>
-    <div class="testimonial-card reveal reveal-delay-2">
-      <div class="stars">★★★★★</div>
-      <blockquote>Garry Saved the day for us. We had made the mistake of trying to get through a bankruptcy without an attorney. After our meeting of creditors, and the tongue lashing from the trustee, We found Garry Stewart who graciously agreed to take our case. He worked quickly to get things straightened out and maintained great communication throughout the process. We are grateful for his help and would recommend him to anyone who needs legal help.</blockquote>
-      <div class="testimonial-meta">
-        <div class="testimonial-name">Josh B.</div>
-        <div class="testimonial-detail">Kansas City, MO</div>
-      </div>
-    </div>
-    <div class="testimonial-card reveal reveal-delay-3">
-      <div class="stars">★★★★★</div>
-      <blockquote>Garry handled my speeding ticket quickly and made sure it didn't impact my insurance rates. He took care of all the paperwork, so I didn't have to worry about anything. His fee was far less than what I would have paid in higher insurance premiums.</blockquote>
-      <div class="testimonial-meta">
-        <div class="testimonial-name">Ashley B.</div>
-        <div class="testimonial-detail">Kansas City, MO</div>
-      </div>
-    </div>
-  </div>
-  <p style="text-align:center; margin-top: 2rem; font-size: 0.72rem; color: var(--sage);">Attorney Advertising. Past results do not guarantee future outcomes.</p>
-</section>
-
 <!-- ── FEATURES ── -->
 <section id="features">
   <div class="features-inner">
@@ -1741,6 +1706,75 @@
   </div>
 </section>
 
+<!-- ── TESTIMONIALS ── -->
+<section id="testimonials">
+  <div class="testimonials-header">
+    <div class="section-eyebrow">Client Testimonials</div>
+    <h2 class="section-title reveal">What Clients Say</h2>
+    <p class="section-sub reveal reveal-delay-1" style="margin: 0 auto;">Real results for real Kansas City families and individuals.</p>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testimonial-card reveal reveal-delay-1">
+      <div class="stars">★★★★★</div>
+      <blockquote>It's been a few months, but he did a wonderful job on my conservatorship! Treated me more like family and that was great. Will use again :-)</blockquote>
+      <div class="testimonial-meta">
+        <div class="testimonial-name">TP</div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal reveal-delay-2">
+      <div class="stars">★★★★★</div>
+      <blockquote>Garry Saved the day for us. We had made the mistake of trying to get through a bankruptcy without an attorney. After our meeting of creditors, and the tongue lashing from the trustee, We found Garry Stewart who graciously agreed to take our case. He worked quickly to get things straightened out and maintained great communication throughout the process. We are grateful for his help and would recommend him to anyone who needs legal help.</blockquote>
+      <div class="testimonial-meta">
+        <div class="testimonial-name">Josh B.</div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal reveal-delay-3">
+      <div class="stars">★★★★★</div>
+      <blockquote>Garry handled my speeding ticket quickly and made sure it didn't impact my insurance rates. He took care of all the paperwork, so I didn't have to worry about anything. His fee was far less than what I would have paid in higher insurance premiums.</blockquote>
+      <div class="testimonial-meta">
+        <div class="testimonial-name">Ashley B.</div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal reveal-delay-1">
+      <div class="stars">★★★★★</div>
+      <blockquote>Very patient, very compassionate, very reasonable. I was comfortable and confident with him through the whole process. He dominated my case and saved me so much money in the long run.</blockquote>
+      <div class="testimonial-meta">
+        <div class="testimonial-name">Gregory W.</div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal reveal-delay-2">
+      <div class="stars">★★★★★</div>
+      <blockquote>Best lawyer I’ve ever had to say the least! Garry is a great honest man, and will definitely get what ever situation needed resolved! Most reasonable you’ll find, and very responsive with info or questions needed etc. His total retainer and fee’s quote was substantially lower from any other attorney I contacted as well. I’m in Washington state and Garry was my lawyer for an out of state situation.</blockquote>
+      <div class="testimonial-meta">
+        <div class="testimonial-name">Shane L.</div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal reveal-delay-3">
+      <div class="stars">★★★★★</div>
+      <blockquote>Mr. Stewart handled my bankruptcy with kindness and compassion. He is a legend and brilliant and if I ever need attorney services again he will always be the man I would turn to. He was very thorough and meticulous he told me everything I could expect and I completely felt much less stressed having him in my corner. I felt like he was a friend during this stressful process. Rest assured he is the best and he truly cares.</blockquote>
+      <div class="testimonial-meta">
+        <div class="testimonial-name">David P.</div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal reveal-delay-1">
+      <div class="stars">★★★★★</div>
+      <blockquote>Garry recently prepared our trust documents for us and guided us through the extensive legal procedures for retitling our homes and autos in order to place them in a revocable trust. He is extremely knowledgeable, friendly and very reasonable in his fees. Garry answered my numerous calls with such patience and helped me to understand what we were doing.</blockquote>
+      <div class="testimonial-meta">
+        <div class="testimonial-name">Marty P.</div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal reveal-delay-2">
+      <div class="stars">★★★★★</div>
+      <blockquote>Garry Stewart helped me in a stressful situation. My snow plow was hit by a career criminal in a snow storm 7 days before Christmas. The man who hit me ran from the scene. I had medical bills and was off work for a month from my injuries. My case had been dragging for 6 months and the insurance company and prosecuting attorney were not taking my case seriously. I heard that Garry was a serious, well-spoken attorney. As soon as I called him, he started getting things done. He called the insurance company and let them know we weren’t messing around. He went to court and I could see the other side’s attorney getting nervous. In 6 more months, I paid off my medical bills with a large settlement, and was even able to buy a new truck. The man who hit and ran came out of hiding, pled guilty with the city and lost his insurance. Garry’s fee was much less than the other attorneys I talked with, and I feel he gave my case more attention than they would have. I feel justice, happiness, and relief. Great attorney.</blockquote>
+      <div class="testimonial-meta">
+        <div class="testimonial-name">Jesse F.</div>
+      </div>
+    </div>
+  </div>
+  <p style="text-align:center; margin-top: 2rem; font-size: 0.72rem; color: var(--sage);">Attorney Advertising. Past results do not guarantee future outcomes.</p>
+</section>
+
+
 <!-- ── CTA BAND ── -->
 <!-- ── APPOINTMENT ── -->
 <section id="appointment">
@@ -1758,13 +1792,7 @@
             <span>(816) 651-4303</span>
           </div>
         </a>
-        <a href="/cdn-cgi/l/email-protection#c398868e828a8f9e" class="contact-detail">
-          <div class="contact-detail-icon"><img src="claude/images/icons/contact-email-icon.png" alt="Email" style="width:100%;height:100%;object-fit:contain;"></div>
-          <div class="contact-detail-text">
-            <strong>Email</strong>
-            <span>[EMAIL ADDRESS]</span>
-          </div>
-        </a>
+
         <div class="contact-detail">
           <div class="contact-detail-icon"><img src="claude/images/icons/contact-map-icon.png" alt="Office" style="width:100%;height:100%;object-fit:contain;"></div>
           <div class="contact-detail-text">
@@ -1870,10 +1898,7 @@
           <span class="footer-contact-icon"><img src="claude/images/icons/contact-phone-icon.png" alt="Phone"></span>
           <a href="tel:(816) 651-4303">(816) 651-4303</a>
         </div>
-        <div class="footer-contact-item">
-          <span class="footer-contact-icon"><img src="claude/images/icons/contact-email-icon.png" alt="Email"></span>
-          <a href="#">[EMAIL]</a>
-        </div>
+
         <div class="footer-contact-item">
           <span class="footer-contact-icon"><img src="claude/images/icons/contact-map-icon.png" alt="Address"></span>
           <span>6720 N Montrose Ave, Kansas City, MO 64151</span>
@@ -1895,7 +1920,7 @@
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
   // ── STICKY HEADER
   const header = document.getElementById('site-header');
   window.addEventListener('scroll', () => {
