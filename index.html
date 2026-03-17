@@ -1449,6 +1449,10 @@
     .hero-left { padding: 9rem 3rem 4rem; }
     .hero-right { height: 400px; }
     .why-grid, .features-inner, .appointment-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .why-pillars { grid-template-columns: repeat(2, 1fr); }
+    .why-statement .bar-admissions-wrapper { flex-direction: column-reverse !important; align-items: center !important; gap: 2rem !important; }
+    .why-statement .bar-admissions-wrapper img { width: 200px !important; height: 200px !important; }
+    .why-statement .bar-admissions { text-align: center; }
     .services-grid { grid-template-columns: repeat(2, 1fr); }
     .testimonials-grid { columns: 2; column-gap: 1rem; }
     .footer-top { grid-template-columns: auto 1fr 1fr; gap: 2rem; }
@@ -1479,6 +1483,14 @@
     .trust-label { font-size: 0.58rem; letter-spacing: 0.05em; }
     .trust-item { padding-right: 0.5rem; }
     .features-list { grid-template-columns: 1fr; }
+    .why-pillars { grid-template-columns: 1fr; gap: 1.25rem; }
+    .why-grid { text-align: center; gap: 2rem; }
+    .why-grid .section-eyebrow, .why-grid .section-title, .why-grid .section-sub { text-align: center; }
+    .why-statement { position: static; }
+    .why-statement .bar-admissions-wrapper { flex-direction: column-reverse !important; align-items: center !important; gap: 1.5rem !important; }
+    .why-statement .bar-admissions-wrapper img { width: 160px !important; height: 160px !important; }
+    .why-statement .bar-admissions { text-align: center; width: 100%; }
+    .pillar { flex-direction: row; text-align: left; }
   }
 </style>
 </head>
@@ -1559,7 +1571,7 @@
       <p class="section-sub reveal reveal-delay-2" style="margin-bottom: 2.5rem;">Every client deserves clarity, commitment, and a lawyer who picks up the phone. Here is what sets B. Garry Stewart apart in Kansas City.</p>
     </div>
     <div class="why-statement reveal reveal-delay-2">
-      <div style="display:flex; align-items:center; gap:1.5rem;">
+      <div class="bar-admissions-wrapper" style="display:flex; align-items:center; gap:1.5rem;">
         <div class="bar-admissions" style="flex:1;">
           <h4>Bar Admissions &amp; Education</h4>
           <ul>
